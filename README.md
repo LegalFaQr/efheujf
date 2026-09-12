@@ -1,26 +1,30 @@
-# Kabira International
+# Kabira The International School
 
-A responsive, dependency-free school website. The authored site is in `dist/` and can be served by any static web host. Sites configuration is in `.openai/hosting.json`.
+Responsive school website in `dist/`, privately hosted through the existing Sites project.
 
 ## Preview
+Run `python -m http.server 4173 --directory dist` and open `http://127.0.0.1:4173`.
 
-Run `python -m http.server 4173 --directory dist` and open `http://localhost:4173`.
+## September redesign
+- Parent journey: admissions and age groups, learning experience, leadership and care, school identity and values, future growth, admissions process and visit information.
+- Compact 64px mobile header, explicit admissions link and persistent bottom parent actions.
+- Keyboard-accessible programme tabs, responsive uniform dialog, mobile navigation and FAQs.
+- Entry animations, scroll reveals, staggered content and interaction transitions. Reduced-motion preference is respected.
+- New supplied high-resolution Logo.jpg copied without altering the artwork.
+- Four regenerated illustrative assets with Kabira uniform branding, including a full-length uniform collection. Intrinsic proportions and contain sizing prevent cropping.
+- Optimised JPEG exports and 768px responsive sources reduce mobile transfer size.
+- Report updates: Bhattacharya Educational Trust, Grow · Learn · Bloom, and conditional long-term expansion towards Class X.
+- Phone numbers, email addresses, messaging links, internal finances and staffing plans are excluded. Higher classes are not advertised as currently available.
 
-## Content and updates
+## Files
+`dist/index.html` contains the school content.
+`dist/styles.css` contains the layout, responsive rules and motion.
+`dist/app.js` contains programme data and interactions.
+`validate-site.py` checks markup, anchors, image sources and contact exclusions.
+Original images are retained locally in `.asset-sources/`; published JPEG assets are in `dist/assets/`.
 
-- `dist/index.html`: school content, navigation, programme cards, FAQ and visit information.
-- `dist/styles.css`: navy, green and white theme and responsive layouts.
-- `dist/app.js`: programme details, accessible dialogs and mobile navigation.
-- Add future classes to both the programme cards and the `programmes` object, and update the FAQ and admissions list when classes actually open.
-- School telephone numbers and email addresses are deliberately excluded, including contact links. The visit section provides directions. There is no online booking backend or collection of personal information.
-- No invented parent testimonials or real-campus claims are included.
+## Image provenance
+Generated using the built-in image-generation tool with Logo.jpg and the supplied uniform reference. The four prompts requested Indian preschool block play (hero), seedling planting (nature), a reading corner (story) and a four-child summer/winter uniform collection. All used the navy/green/white palette with visible left-chest crest and KABIRA embroidery, natural lighting, realistic proportions and full compositions. Embroidery is an illustrative approximation, not a pixel-identical reproduction. These are not actual campus photographs and are labelled illustrative.
 
-## Assets
-
-The logo and uniform designs were supplied by the school. The classroom image is an AI-generated illustrative scene, not a photograph of the school or its pupils. The site labels it accordingly. Replace it with authorised real campus photography when available.
-
-Built-in image-generation prompt: Photorealistic premium editorial preschool hero; fictional contemporary Indian classroom, three Indian children aged 3–5 and an Indian woman teacher playing with wooden blocks, navy/green/white uniforms, natural wood and daylight, greenery outside, subjects middle/right with quieter left background; no text, logos, watermark or UI.
-
-## Validation
-
-JavaScript syntax checked. Desktop and 390px mobile layouts inspected. Programme dialog, Escape dismissal, mobile navigation, FAQ expansion and uniform gallery verified in-browser. Internal anchors and loaded images checked; no mobile horizontal overflow found. Phone, email and messaging links excluded.
+## Verification
+JavaScript syntax, internal anchors, unique IDs, image metadata and responsive sources, programme-tab structure, contact-detail exclusions and absence of cropping rules checked for this revision. Hero and uniform asset compositions visually inspected. Browser-based visual and interaction re-testing could not run because the Codex browser checker failed during Windows sandbox startup; do not interpret the source checks as a full browser test.
