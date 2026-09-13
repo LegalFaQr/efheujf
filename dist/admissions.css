@@ -86,8 +86,8 @@
 @media(max-width:960px){.programme-journey{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.programme-journey{grid-template-columns:1fr}.eligibility-list{grid-template-columns:1fr}}
 .mt-30{margin-top:30px}
-.visit-intro{max-width:640px;margin-bottom:36px}
-.visit-intro p:not(.eyebrow){margin-top:16px;color:var(--muted);font-size:18px}
+.editorial-intro{max-width:660px;margin-bottom:36px}
+.editorial-intro p:not(.eyebrow){margin-top:20px;color:var(--muted);font-size:18px;line-height:1.65}
 .stage-path{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin-bottom:24px}
 .stage-path a{color:var(--green);border-bottom:1px solid var(--line);padding-bottom:2px}
 .stage-path strong{color:var(--navy);font-weight:600}
