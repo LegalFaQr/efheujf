@@ -1,125 +1,77 @@
-document.documentElement.classList.add('js');
-
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const revealItems = [...document.querySelectorAll('[data-reveal]')];
-
-if (reducedMotion || !('IntersectionObserver' in window)) {
-  revealItems.forEach((item) => item.classList.add('is-visible'));
-} else {
-  const observer = new IntersectionObserver((entries, revealObserver) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      revealObserver.unobserve(entry.target);
-    });
-  }, { threshold: 0.11, rootMargin: '0px 0px -6% 0px' });
-  revealItems.forEach((item) => observer.observe(item));
-}
-
-const header = document.querySelector('[data-header]');
-const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 10);
-updateHeader();
-window.addEventListener('scroll', updateHeader, { passive: true });
-
-const menuButton = document.querySelector('[data-menu-button]');
-const mobileMenu = document.querySelector('[data-mobile-menu]');
-let closeTimer;
-
-function openMenu() {
-  if (!menuButton || !mobileMenu) return;
-  window.clearTimeout(closeTimer);
-  mobileMenu.hidden = false;
-  document.body.classList.add('menu-open');
-  menuButton.setAttribute('aria-expanded', 'true');
-  menuButton.setAttribute('aria-label', 'Close navigation');
-  requestAnimationFrame(() => mobileMenu.classList.add('is-open'));
-}
-
+const menu = document.querySelector('.menu-toggle');
+const nav = document.querySelector('#navigation');
+const header = document.querySelector('.header');
+const mobile = window.matchMedia('(max-width: 760px)');
 function closeMenu(returnFocus = false) {
-  if (!menuButton || !mobileMenu || mobileMenu.hidden) return;
-  mobileMenu.classList.remove('is-open');
-  document.body.classList.remove('menu-open');
-  menuButton.setAttribute('aria-expanded', 'false');
-  menuButton.setAttribute('aria-label', 'Open navigation');
-  closeTimer = window.setTimeout(() => { mobileMenu.hidden = true; }, reducedMotion ? 0 : 250);
-  if (returnFocus) menuButton.focus();
+  nav.classList.remove('open');
+  menu.setAttribute('aria-expanded', 'false');
+  menu.setAttribute('aria-label', 'Open navigation menu');
+  if (returnFocus) menu.focus();
 }
-
-menuButton?.addEventListener('click', () => {
-  if (menuButton.getAttribute('aria-expanded') === 'true') closeMenu();
-  else openMenu();
+menu.addEventListener('click', () => {
+  const open = menu.getAttribute('aria-expanded') !== 'true';
+  nav.classList.toggle('open', open);
+  menu.setAttribute('aria-expanded', String(open));
+  menu.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
 });
-mobileMenu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => closeMenu()));
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && menuButton?.getAttribute('aria-expanded') === 'true') closeMenu(true);
-});
-window.addEventListener('resize', () => {
-  if (window.innerWidth > 1080) closeMenu();
-}, { passive: true });
-
-document.querySelectorAll('[data-accordion]').forEach((accordion) => {
-  accordion.querySelectorAll('details').forEach((details) => {
-    details.addEventListener('toggle', () => {
-      if (!details.open) return;
-      accordion.querySelectorAll('details[open]').forEach((openItem) => {
-        if (openItem !== details) openItem.open = false;
-      });
-    });
+nav.addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
+document.addEventListener('click', e => { if (!header.contains(e.target)) closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && nav.classList.contains('open')) closeMenu(true); });
+mobile.addEventListener('change', () => closeMenu());
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 16);
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+const programmes = {
+  'Pre-Nursery': {age:'PRE-NURSERY · 2+ YEARS', title:'Their first little world of learning.', description:'A gentle introduction to school, where feeling comfortable comes first. Through stories, sensory play and first friendships, children begin to find their confidence.', image:'story-v2.jpg', alt:'Illustrative storytelling with children and a teacher', skills:['Communication, listening & vocabulary','Sensory play, colours & shapes','Music, movement & motor skills','Friendships & simple self-help skills']},
+  'Nursery': {age:'NURSERY · 3+ YEARS', title:'Curiosity takes root.', description:'As children become more expressive, they make connections through hands-on learning, conversation and creative activities. Each little discovery builds a foundation for independent learning.', image:'nature-v2.jpg', alt:'Illustrative nature discovery with children planting seedlings', skills:['Pre-reading & phonological awareness','Early numeracy & environmental awareness','Art, storytelling, music & movement','Social-emotional learning & motor skills']},
+  'LKG': {age:'LKG · 4+ YEARS', title:'Confidence in every new step.', description:'A play-based approach strengthens academic readiness while preserving the joy of discovery. Children build language, reasoning and everyday independence.', image:'hero-v2.jpg', alt:'Illustrative hands-on block activity with children in Kabira uniforms', skills:['Phonics, letter sounds & blending readiness','Early reading & vocabulary','Number concepts & logical thinking','Writing readiness, expression & life skills']},
+  'UKG': {age:'UKG · 5+ YEARS', title:'Ready for their next chapter.', description:'Children develop the foundations for a confident transition into primary school, supported by a balance of academics, creativity and growing independence.', image:'story-v2.jpg', alt:'Illustrative group reading activity with children and teacher', skills:['Reading fluency, phonics & blending','Sentence formation & writing development','Number operations & logical reasoning','General awareness & confident communication']}
+};
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+const panel = document.querySelector('#programme-panel');
+let animationTimer;
+function selectProgramme(tab, focus = false) {
+  const data = programmes[tab.dataset.programme];
+  tabs.forEach(item => { const selected = item === tab; item.setAttribute('aria-selected', String(selected)); item.tabIndex = selected ? 0 : -1; });
+  panel.setAttribute('aria-labelledby', tab.id);
+  document.querySelector('#programme-age').textContent = data.age;
+  document.querySelector('#programme-title').textContent = data.title;
+  document.querySelector('#programme-description').textContent = data.description;
+  document.querySelector('#programme-skills').replaceChildren(...data.skills.map(skill => { const li = document.createElement('li'); li.textContent = skill; return li; }));
+  const photo = document.querySelector('#programme-image');
+  photo.src = 'assets/' + data.image;
+  photo.srcset = 'assets/' + data.image.replace('.jpg', '-small.jpg') + ' 768w, assets/' + data.image + (data.image === 'hero-v2.jpg' ? ' 1536w' : ' 1448w');
+  photo.alt = data.alt;
+  panel.querySelector('figcaption').textContent = 'The ' + tab.dataset.programme + ' journey · Illustrative scene';
+  panel.classList.remove('changing');
+  void panel.offsetWidth;
+  panel.classList.add('changing');
+  clearTimeout(animationTimer);
+  animationTimer = setTimeout(() => panel.classList.remove('changing'), 600);
+  if(focus) tab.focus();
+}
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectProgramme(tab));
+  tab.addEventListener('keydown', e => {
+    let next;
+    if (e.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    if (e.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+    if (e.key === 'Home') next = 0;
+    if (e.key === 'End') next = tabs.length - 1;
+    if (next !== undefined) { e.preventDefault(); selectProgramme(tabs[next], true); }
   });
 });
-
-const visitForm = document.querySelector('[data-visit-form]');
-if (visitForm) {
-  const dateInput = visitForm.querySelector('input[type="date"]');
-  const now = new Date();
-  const today = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-  dateInput?.setAttribute('min', today);
-
-  visitForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!visitForm.reportValidity()) return;
-
-    const data = new FormData(visitForm);
-    const summary = visitForm.querySelector('[data-visit-summary]');
-    if (!summary) return;
-
-    const date = new Date(`${data.get('visitDate')}T12:00:00`);
-    const formattedDate = Number.isNaN(date.getTime())
-      ? String(data.get('visitDate'))
-      : new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
-
-    summary.replaceChildren();
-
-    const heading = document.createElement('h3');
-    heading.textContent = 'Your visit plan is ready.';
-    summary.append(heading);
-
-    const intro = document.createElement('p');
-    intro.textContent = `${data.get('parentName')}, you are planning a visit for ${data.get('childName')} on ${formattedDate}.`;
-    summary.append(intro);
-
-    const program = document.createElement('p');
-    program.textContent = `Program to discuss: ${data.get('program')} · Child’s age: ${data.get('childAge')}.`;
-    summary.append(program);
-
-    const questionsValue = String(data.get('questions') || '').trim();
-    if (questionsValue) {
-      const questions = document.createElement('p');
-      questions.textContent = `Questions to bring: ${questionsValue}`;
-      summary.append(questions);
-    }
-
-    const note = document.createElement('p');
-    note.textContent = 'Keep this page open or print the plan. No details have been sent or stored by the website.';
-    summary.append(note);
-
-    const print = document.createElement('button');
-    print.type = 'button';
-    print.textContent = 'Print this visit plan';
-    print.addEventListener('click', () => window.print());
-    summary.append(print);
-
-    summary.hidden = false;
-    summary.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' });
-  });
+const uniform = document.querySelector('#uniform-dialog');
+const uniformButton = document.querySelector('#view-uniform');
+uniformButton.addEventListener('click', () => { uniform.showModal(); document.body.classList.add('dialog-open'); });
+uniform.querySelector('.close-dialog').addEventListener('click', () => uniform.close());
+uniform.addEventListener('close', () => { document.body.classList.remove('dialog-open'); uniformButton.focus({preventScroll:true}); });
+uniform.addEventListener('click', e => { if(e.target === uniform) { const r=uniform.getBoundingClientRect(); if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) uniform.close(); } });
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+if ('IntersectionObserver' in window && !reducedMotion.matches) {
+  const reveals = [...document.querySelectorAll('.reveal')];
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }), {threshold:0.06,rootMargin:'0px 0px -20px 0px'});
+  reveals.forEach((element,index) => { element.style.setProperty('--delay', (index % 3)*65+'ms'); observer.observe(element); });
+  document.body.classList.add('motion-ready');
+  reducedMotion.addEventListener('change', e => { if(e.matches) { document.body.classList.remove('motion-ready'); observer.disconnect(); } });
 }

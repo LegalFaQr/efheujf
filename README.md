@@ -1,37 +1,30 @@
 # Kabira The International School
 
-Premium three-page preschool and daycare website for Kabira in Zirakpur, Punjab.
+Responsive school website in `dist/`, privately hosted through the existing Sites project.
 
-## Pages
+## Preview
+Run `python -m http.server 4173 --directory dist` and open `http://127.0.0.1:4173`.
 
-- Home: `dist/index.html`
-- The Kabira Experience: `dist/experience.html`
-- Admissions & Visit: `dist/admissions.html`
+## September redesign
+- Parent journey: admissions and age groups, learning experience, leadership and care, school identity and values, future growth, admissions process and visit information.
+- Compact 64px mobile header, explicit admissions link and persistent bottom parent actions.
+- Keyboard-accessible programme tabs, responsive uniform dialog, mobile navigation and FAQs.
+- Entry animations, scroll reveals, staggered content and interaction transitions. Reduced-motion preference is respected.
+- New supplied high-resolution Logo.jpg copied without altering the artwork.
+- Four regenerated illustrative assets with Kabira uniform branding, including a full-length uniform collection. Intrinsic proportions and contain sizing prevent cropping.
+- Optimised JPEG exports and 768px responsive sources reduce mobile transfer size.
+- Report updates: Bhattacharya Educational Trust, Grow · Learn · Bloom, and conditional long-term expansion towards Class X.
+- Phone numbers, email addresses, messaging links, internal finances and staffing plans are excluded. Higher classes are not advertised as currently available.
 
-## Build and validation
+## Files
+`dist/index.html` contains the school content.
+`dist/styles.css` contains the layout, responsive rules and motion.
+`dist/app.js` contains programme data and interactions.
+`validate-site.py` checks markup, anchors, image sources and contact exclusions.
+Original images are retained locally in `.asset-sources/`; published JPEG assets are in `dist/assets/`.
 
-```powershell
-node scripts\build-release.mjs
-node scripts\validate-final.mjs
-node --check dist\app.js
-```
+## Image provenance
+Generated using the built-in image-generation tool with Logo.jpg and the supplied uniform reference. The four prompts requested Indian preschool block play (hero), seedling planting (nature), a reading corner (story) and a four-child summer/winter uniform collection. All used the navy/green/white palette with visible left-chest crest and KABIRA embroidery, natural lighting, realistic proportions and full compositions. Embroidery is an illustrative approximation, not a pixel-identical reproduction. These are not actual campus photographs and are labelled illustrative.
 
-Local preview:
-
-```powershell
-python -m http.server 4173 --bind 127.0.0.1 --directory dist
-```
-
-Open `http://127.0.0.1:4173/index.html`.
-
-## Design
-
-The final design combines modern editorial hierarchy with the previous site’s richer visual rhythm. Deep navy, growth green, warm cream, and restrained gold form one consistent system. Fine weave lines reference Sant Kabir’s association with thread and simplicity without overlapping content.
-
-Images use natural aspect ratios inside rectangular frames, with responsive mobile sources and no arch-shaped masks. Generated school scenes are labelled as illustrative. Dr. Rita Rattan appears as Director & Principal using an identity-preserving professional portrait derived from the supplied photographs.
-
-## Content and privacy
-
-Current programs are Pre-Nursery, Nursery, LKG, UKG, and Daycare. The long-term class expansion plan is described conditionally. No school phone number, email address, messaging link, internal financial information, or unsupported campus claim is published.
-
-The visit planner works locally in the browser. It does not submit or store personal data.
+## Verification
+JavaScript syntax, internal anchors, unique IDs, image metadata and responsive sources, programme-tab structure, contact-detail exclusions and absence of cropping rules checked for this revision. Hero and uniform asset compositions visually inspected. Browser-based visual and interaction re-testing could not run because the Codex browser checker failed during Windows sandbox startup; do not interpret the source checks as a full browser test.

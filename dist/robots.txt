@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://kabira-international-zirakpur.ritarattan17.chatgpt.site/sitemap.xml
