@@ -28,3 +28,7 @@ Generated using the built-in image-generation tool with Logo.jpg and the supplie
 
 ## Verification
 JavaScript syntax, internal anchors, unique IDs, image metadata and responsive sources, programme-tab structure, contact-detail exclusions and absence of cropping rules checked for this revision. Hero and uniform asset compositions visually inspected. Browser-based visual and interaction re-testing could not run because the Codex browser checker failed during Windows sandbox startup; do not interpret the source checks as a full browser test.
+
+## Two-page organisation
+Home keeps the original welcome, leadership, admissions, FAQs and visit sections. experience.html contains the original programmes, learning experience, daycare, uniforms, story and future plans. Typography, spacing, imagery and component styles are preserved. Only the green palette is slightly darker. Old homepage section links redirect to their new location. Run python validate-site.py to validate both pages and cross-page anchors.
+

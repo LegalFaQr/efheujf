@@ -1,3 +1,14 @@
+// Preserve links bookmarked before the page split.
+const movedAnchors = new Set(['programmes', 'programme-panel', 'experience', 'school-day', 'daycare', 'gallery', 'about', 'future']);
+function followMovedAnchor() {
+  const hash = location.hash.slice(1);
+  if (document.body.dataset.page === 'home' && movedAnchors.has(hash)) {
+    location.replace('experience.html' + location.hash);
+  }
+}
+followMovedAnchor();
+window.addEventListener('hashchange', followMovedAnchor);
+
 const menu = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#navigation');
 const header = document.querySelector('.header');
@@ -63,10 +74,12 @@ tabs.forEach((tab, index) => {
 });
 const uniform = document.querySelector('#uniform-dialog');
 const uniformButton = document.querySelector('#view-uniform');
+if (uniform && uniformButton) {
 uniformButton.addEventListener('click', () => { uniform.showModal(); document.body.classList.add('dialog-open'); });
 uniform.querySelector('.close-dialog').addEventListener('click', () => uniform.close());
 uniform.addEventListener('close', () => { document.body.classList.remove('dialog-open'); uniformButton.focus({preventScroll:true}); });
 uniform.addEventListener('click', e => { if(e.target === uniform) { const r=uniform.getBoundingClientRect(); if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) uniform.close(); } });
+}
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 if ('IntersectionObserver' in window && !reducedMotion.matches) {
   const reveals = [...document.querySelectorAll('.reveal')];
