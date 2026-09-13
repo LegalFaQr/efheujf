@@ -5,7 +5,7 @@ const root = process.cwd();
 const dist = path.join(root, 'dist');
 const files = ['index.html', 'about.html', 'experience.html', 'programmes.html', 'pre-nursery.html', 'nursery.html', 'lkg.html', 'ukg.html', 'daycare.html', 'admissions.html', 'styles.css', 'app.js', 'admissions.css', 'admissions.js'];
 for (const file of await readdir(path.join(dist, 'assets'))) files.push(`assets/${file}`);
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.png': 'image/png' };
 const assets = {};
 for (const file of files) {
   const data = await readFile(path.join(dist, file));
