@@ -8,10 +8,13 @@ function database() {
   const sqlite = new DatabaseSync(':memory:');
   for (const name of readdirSync('drizzle').filter(n => n.endsWith('.sql'))) sqlite.exec(readFileSync(`drizzle/${name}`, 'utf8'));
   return { sqlite, prepare(sql) {
-    return { bind(...values) { return {
-      async run() { const r = sqlite.prepare(sql).run(...values); return { success: true, meta: { changes: r.changes } }; },
-      async first() { return sqlite.prepare(sql).get(...values) || null; },
-    }; } };
+    return {
+      bind(...values) { return {
+        async run() { const r = sqlite.prepare(sql).run(...values); return { success: true, meta: { changes: r.changes } }; },
+        async first() { return sqlite.prepare(sql).get(...values) || null; },
+      }; },
+      async all() { return { results: sqlite.prepare(sql).all(), success: true }; },
+    };
   } };
 }
 const valid = () => ({ requestId: crypto.randomUUID(), parentName: 'Test Parent', childFirstName: 'Test Child', childAge: '3', programme: 'Nursery', contactNumber: '9000000000', message: 'Local automated test only', consent: true, website: '' });
@@ -60,5 +63,27 @@ test('country-code phone input is normalised before saving', async () => {
   const DB = database();
   assert.equal((await worker.fetch(request({ ...valid(), contactNumber: '+91 9000000000' }), { DB })).status, 201);
   assert.equal(DB.sqlite.prepare('SELECT contact_number FROM admissions').get().contact_number, '9000000000');
+  DB.sqlite.close();
+});
+test('admissions export is hidden without the correct admin key', async () => {
+  const DB = database();
+  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export'), { DB })).status, 404);
+  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=wrong'), { DB, ADMIN_EXPORT_KEY: 'secret' })).status, 404);
+  DB.sqlite.close();
+});
+test('admissions export returns a valid xlsx workbook with the correct admin key', async () => {
+  const DB = database();
+  await worker.fetch(request(valid()), { DB });
+  const response = await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=secret'), { DB, ADMIN_EXPORT_KEY: 'secret' });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('content-type'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  assert.equal(bytes[0], 0x50); assert.equal(bytes[1], 0x4b); // "PK" zip signature
+  DB.sqlite.close();
+});
+test('admission notification is skipped without an email API key configured, and never breaks the response', async () => {
+  const DB = database();
+  const response = await worker.fetch(request(valid()), { DB });
+  assert.equal(response.status, 201);
   DB.sqlite.close();
 });
