@@ -1,5 +1,10 @@
 const form = document.querySelector('#admission-form');
 if (form) {
+  const programmeField = form.querySelector('select[name=programme]');
+  const requestedProgramme = new URLSearchParams(location.search).get('programme');
+  if (programmeField && requestedProgramme && [...programmeField.options].some(option => option.value === requestedProgramme)) {
+    programmeField.value = requestedProgramme;
+  }
   const button = form.querySelector('button[type=submit]');
   const status = form.querySelector('.form-status');
   let pendingId;

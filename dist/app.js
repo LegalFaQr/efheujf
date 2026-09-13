@@ -21,6 +21,20 @@ mobile.addEventListener('change', () => closeMenu());
 const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 16);
 window.addEventListener('scroll', onScroll, {passive:true});
 onScroll();
+const navAdmissions = document.querySelector('#nav-admissions');
+const pageCtas = [...document.querySelectorAll('.page-cta')];
+if (navAdmissions && pageCtas.length && 'IntersectionObserver' in window) {
+  const setVisible = visible => {
+    navAdmissions.classList.toggle('is-hidden', !visible);
+    navAdmissions.tabIndex = visible ? 0 : -1;
+  };
+  const visibleCtas = new Set();
+  const ctaObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) visibleCtas.add(entry.target); else visibleCtas.delete(entry.target); });
+    setVisible(visibleCtas.size === 0);
+  }, {threshold:0.2});
+  pageCtas.forEach(cta => ctaObserver.observe(cta));
+}
 const uniform = document.querySelector('#uniform-dialog');
 const uniformButton = document.querySelector('#view-uniform');
 if (uniform && uniformButton) {

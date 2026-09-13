@@ -86,6 +86,9 @@ expected_css = expected_css.replace('.about{padding-top:45px}', '.about{padding-
 expected_css = expected_css.replace('.section{padding:75px 6%}', '.section{padding:60px 6%}')
 # Phase 4: cap section-heading's own measure so title+intro pairs don't stretch into a dead gap on wide screens.
 expected_css = expected_css.replace('.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:9%;margin-bottom:32px}', '.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:6%;margin-bottom:32px;max-width:1180px}')
+# Phase 5: tighten the wordmark/subtitle gap.
+expected_css = expected_css.replace('.brand small{display:block;font-size:10px;letter-spacing:.09em;text-align:center;margin-top:5px;color:var(--green)}', '.brand small{display:block;font-size:10px;letter-spacing:.09em;text-align:center;margin-top:1px;color:var(--green)}')
+expected_css = expected_css.replace('.brand img{width:42px;height:46px}.brand strong{font-size:24px;letter-spacing:.12em}.brand small{font-size:7px;letter-spacing:.06em;margin-top:3px}', '.brand img{width:42px;height:46px}.brand strong{font-size:24px;letter-spacing:.12em}.brand small{font-size:7px;letter-spacing:.06em;margin-top:1px}')
 css = (dist / 'styles.css').read_text(encoding='utf-8')
 assert css == expected_css, 'An unexpected visual style changed'
 assert css.count('{') == css.count('}')
