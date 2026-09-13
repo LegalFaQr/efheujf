@@ -3,3 +3,8 @@
 *.tar
 .env*
 .asset-sources/
+
+node_modules/
+dist/server/
+dist/.openai/
+

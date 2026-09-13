@@ -32,3 +32,9 @@ JavaScript syntax, internal anchors, unique IDs, image metadata and responsive s
 ## Two-page organisation
 Home keeps the original welcome, leadership, admissions, FAQs and visit sections. experience.html contains the original programmes, learning experience, daycare, uniforms, story and future plans. Typography, spacing, imagery and component styles are preserved. Only the green palette is slightly darker. Old homepage section links redirect to their new location. Run python validate-site.py to validate both pages and cross-page anchors.
 
+
+## Admissions service
+The website has a native Kabira-branded admission enquiry form. Enquiries are saved privately in the site's D1 admissions table; no public read/list endpoint is exposed and no email notifications are configured. Authorized school owners can inspect records through Sites database tools. Only parent-provided enquiry details are collected with consent; raw identity documents are not requested.
+The supplied Director and Principal portrait is compressed as WebP without alteration. Leadership claim provenance is recorded in LEADERSHIP_SOURCE_NOTES.md. The embedded map and directions button use the school location supplied by the user.
+Build: node scripts/build-worker.mjs. Generate schema changes: node node_modules/drizzle-kit/bin.cjs generate. Tests: node --test tests/admissions.test.mjs. HTML and links: python validate-site.py. Authored static files remain in dist; the build embeds them in the dependency-free Worker for deployment.
+
