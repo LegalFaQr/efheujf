@@ -2,6 +2,8 @@ const programmes = new Set(['Pre-Nursery', 'Nursery', 'LKG', 'UKG', 'Daycare', '
 const ages = new Set(['Under 2', '2', '3', '4', '5', '6+']);
 const json = (data, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 const clean = value => typeof value === 'string' ? value.trim().replace(/[\u0000-\u001f]/g, '') : '';
+// Lightweight branded 404 — kept inline rather than as a dist page to avoid extra build/routing complexity.
+const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Kabira The International School</title><meta name="robots" content="noindex"><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#102851;color:#fff;font:18px/1.6 'DM Sans',sans-serif;text-align:center;padding:24px}main{max-width:440px}h1{font:400 32px/1.2 'Playfair Display',Georgia,serif;margin:0 0 16px}p{color:#c9d6e8;margin:0 0 28px}a{display:inline-flex;padding:14px 24px;background:#94b862;color:#0b203f;text-decoration:none;font-weight:500}</style></head><body><main><h1>This page has wandered off.</h1><p>The page you're looking for doesn't exist. Let's get you back to Kabira The International School.</p><a href="/">Back to home ↗</a></main></body></html>`;
 
 export function validateAdmission(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return { error: 'Please complete the admission enquiry form.' };
@@ -80,7 +82,7 @@ export default {
     const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
     const assets = typeof PUBLIC_ASSETS === 'undefined' ? {} : PUBLIC_ASSETS;
     const asset = Object.hasOwn(assets, pathname) ? assets[pathname] : null;
-    if (!asset) return new Response('Page not found', { status: 404 });
+    if (!asset) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     const headers = { 'Content-Type': asset.type, 'ETag': asset.etag, 'Cache-Control': asset.type.startsWith('text/html') ? 'no-cache' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin' };
     if (request.headers.get('if-none-match') === asset.etag) return new Response(null, { status: 304, headers });
     return new Response(request.method === 'HEAD' ? null : Uint8Array.from(atob(asset.body), c => c.charCodeAt(0)), { headers });
