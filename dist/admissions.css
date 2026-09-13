@@ -1,5 +1,19 @@
 @charset "UTF-8";
 /* Extensions use the existing Kabira palette, type and section rhythm. */
+:root{--surface-base:#fff;--surface-green-soft:var(--mist);--surface-navy-soft:#eef1f6;--surface-lime-soft:#f6f7e9;--surface-neutral:#f7f6f2;--text-primary:var(--ink);--text-secondary:var(--muted);--text-on-dark:#e7ecf3;--border-soft:var(--line);--border-brand:#b7c7ab}
+.surface-green{background:var(--surface-green-soft)}
+.surface-navy-soft{background:var(--surface-navy-soft)}
+.surface-neutral{background:var(--surface-neutral)}
+.surface-lime-soft{background:var(--surface-lime-soft)}
+.button-secondary{background:var(--surface-green-soft);color:var(--navy);border-color:var(--border-brand)}
+.button-secondary:hover{background:var(--surface-navy-soft);border-color:var(--navy)}
+/* Reused pillar/development cards get real surface depth instead of a bare top rule. */
+.philosophy-grid article{background:var(--surface-neutral);padding:26px 24px 24px;border-top:3px solid var(--green)}
+.trust-points article{padding:22px 24px;background:var(--surface-neutral);border-top:2px solid var(--border-brand);border-left:0}
+.day-steps p{font-size:16px}
+/* The tag pills borrow navy-on-dark styling by default; on light "How Learning Happens" surfaces they need dark, readable text. */
+.experience-heading .learning-topics{color:var(--navy);border-top-color:var(--border-soft)}
+.experience-heading .learning-topics span{font-weight:500}
 .leadership-profile{display:grid;grid-template-columns:.8fr 1.2fr;gap:8%;align-items:start}
 .director-photo img{width:100%;height:auto;object-fit:contain}
 .director-photo figcaption{padding:18px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;color:var(--muted);font-size:14px}
@@ -17,7 +31,7 @@
 .admission-next-steps ol{padding-left:21px;margin:0;color:#d7e1ec;font-size:16px}
 .admission-next-steps li{margin-bottom:13px;padding-left:5px}
 .admission-next-steps li::marker{color:var(--lime)}
-.admission-form{padding:34px;background:#fff;color:var(--ink);border-top:4px solid var(--green)}
+.admission-form{padding:34px;background:var(--surface-neutral);color:var(--ink);border-top:4px solid var(--green);box-shadow:0 18px 50px #10285112}
 .form-brand{display:flex;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:25px}
 .form-brand img{width:54px;height:54px;object-fit:contain}
 .form-brand h3{font-size:25px;letter-spacing:-.02em}

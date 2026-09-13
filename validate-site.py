@@ -84,6 +84,8 @@ expected_css = expected_css.replace('}h2{', '}h2,.page-title{').replace('h2 em,h
 expected_css = expected_css.replace('.section{padding:94px 7%;max-width:1700px;margin:auto}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:9%;margin-bottom:40px}', '.section{padding:72px 7%;max-width:1700px;margin:auto}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:9%;margin-bottom:32px}')
 expected_css = expected_css.replace('.about{padding-top:45px}', '.about{padding-top:28px}')
 expected_css = expected_css.replace('.section{padding:75px 6%}', '.section{padding:60px 6%}')
+# Phase 4: cap section-heading's own measure so title+intro pairs don't stretch into a dead gap on wide screens.
+expected_css = expected_css.replace('.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:9%;margin-bottom:32px}', '.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:6%;margin-bottom:32px;max-width:1180px}')
 css = (dist / 'styles.css').read_text(encoding='utf-8')
 assert css == expected_css, 'An unexpected visual style changed'
 assert css.count('{') == css.count('}')
