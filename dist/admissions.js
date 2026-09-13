@@ -27,7 +27,7 @@ if (form) {
       const result = await response.json().catch(() => null);
       if (!response.ok || result?.ok !== true) throw new Error(result?.error || 'Your enquiry could not be saved. Please try again shortly.');
       status.dataset.state = 'success';
-      status.textContent = `Thank you. Your admission enquiry has been received by Kabira. Reference: ${result.reference.slice(0, 8).toUpperCase()}. This is an enquiry, not confirmation of admission.`;
+      status.textContent = `Thank you. Your enquiry has been received by Kabira. Reference: ${result.reference.slice(0, 8).toUpperCase()}. This is an enquiry, not confirmation of admission — you're also welcome to call or WhatsApp us on +91 91151 04300 any time.`;
       form.reset(); pendingId = null; previousPayload = null;
     } catch (error) {
       status.dataset.state = 'error';

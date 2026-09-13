@@ -57,7 +57,11 @@ for name, page in pages.items():
         if not urlsplit(asset).scheme:
             assert (dist / asset).is_file(), f'Missing asset: {asset}'
     assert all('alt' in a and 'width' in a and 'height' in a for a in page.images)
-    assert not re.search(r'mailto:|tel:|wa\.me|9988369035|@gmail', texts[name], re.I)
+    assert not re.search(r'mailto:|9988369035|@gmail', texts[name], re.I)
+    for tel in re.findall(r'tel:([^"\'>]+)', texts[name]):
+        assert tel == '+919115104300', f'Unexpected phone number on {name}: {tel}'
+    for wa in re.findall(r'wa\.me/(\d+)', texts[name]):
+        assert wa == '919115104300', f'Unexpected WhatsApp number on {name}: {wa}'
     assert '<link rel="canonical"' in texts[name]
     lowered = texts[name].lower()
     for phrase in banned_phrases:
@@ -76,6 +80,10 @@ expected_css = baseline_css.replace('--green:#416a32', '--green:#355e2c').replac
 expected_css = expected_css.replace('.button-green:hover{background:#d2e6a9}', '.button-green:hover{background:#aecb84}')
 expected_css = expected_css.replace('.hero h1 em{color:#c9e39d}', '.hero h1 em{color:var(--lime)}')
 expected_css = expected_css.replace('}h2{', '}h2,.page-title{').replace('h2 em,h3 em{', 'h2 em,h3 em,.page-title em{')
+# Phase 3: tighter desktop section rhythm (mobile tiers left untouched).
+expected_css = expected_css.replace('.section{padding:94px 7%;max-width:1700px;margin:auto}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:9%;margin-bottom:40px}', '.section{padding:72px 7%;max-width:1700px;margin:auto}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:9%;margin-bottom:32px}')
+expected_css = expected_css.replace('.about{padding-top:45px}', '.about{padding-top:28px}')
+expected_css = expected_css.replace('.section{padding:75px 6%}', '.section{padding:60px 6%}')
 css = (dist / 'styles.css').read_text(encoding='utf-8')
 assert css == expected_css, 'An unexpected visual style changed'
 assert css.count('{') == css.count('}')
