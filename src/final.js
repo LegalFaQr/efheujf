@@ -1,20 +1,19 @@
 document.documentElement.classList.add('js');
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 const revealItems = [...document.querySelectorAll('[data-reveal]')];
+
 if (reducedMotion || !('IntersectionObserver' in window)) {
   revealItems.forEach((item) => item.classList.add('is-visible'));
 } else {
-  const revealObserver = new IntersectionObserver((entries, observer) => {
+  const observer = new IntersectionObserver((entries, revealObserver) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
+      revealObserver.unobserve(entry.target);
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
-
-  revealItems.forEach((item) => revealObserver.observe(item));
+  }, { threshold: 0.11, rootMargin: '0px 0px -6% 0px' });
+  revealItems.forEach((item) => observer.observe(item));
 }
 
 const header = document.querySelector('[data-header]');
@@ -22,55 +21,48 @@ const updateHeader = () => header?.classList.toggle('is-scrolled', window.scroll
 updateHeader();
 window.addEventListener('scroll', updateHeader, { passive: true });
 
-const menuToggle = document.querySelector('[data-menu-toggle]');
+const menuButton = document.querySelector('[data-menu-button]');
 const mobileMenu = document.querySelector('[data-mobile-menu]');
-let menuCloseTimer;
+let closeTimer;
 
 function openMenu() {
-  if (!menuToggle || !mobileMenu) return;
-  window.clearTimeout(menuCloseTimer);
+  if (!menuButton || !mobileMenu) return;
+  window.clearTimeout(closeTimer);
   mobileMenu.hidden = false;
   document.body.classList.add('menu-open');
-  menuToggle.setAttribute('aria-expanded', 'true');
-  menuToggle.setAttribute('aria-label', 'Close navigation');
+  menuButton.setAttribute('aria-expanded', 'true');
+  menuButton.setAttribute('aria-label', 'Close navigation');
   requestAnimationFrame(() => mobileMenu.classList.add('is-open'));
 }
 
-function closeMenu({ returnFocus = false } = {}) {
-  if (!menuToggle || !mobileMenu || mobileMenu.hidden) return;
+function closeMenu(returnFocus = false) {
+  if (!menuButton || !mobileMenu || mobileMenu.hidden) return;
   mobileMenu.classList.remove('is-open');
   document.body.classList.remove('menu-open');
-  menuToggle.setAttribute('aria-expanded', 'false');
-  menuToggle.setAttribute('aria-label', 'Open navigation');
-  menuCloseTimer = window.setTimeout(() => {
-    mobileMenu.hidden = true;
-  }, reducedMotion ? 0 : 290);
-  if (returnFocus) menuToggle.focus();
+  menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.setAttribute('aria-label', 'Open navigation');
+  closeTimer = window.setTimeout(() => { mobileMenu.hidden = true; }, reducedMotion ? 0 : 250);
+  if (returnFocus) menuButton.focus();
 }
 
-menuToggle?.addEventListener('click', () => {
-  if (menuToggle.getAttribute('aria-expanded') === 'true') closeMenu();
+menuButton?.addEventListener('click', () => {
+  if (menuButton.getAttribute('aria-expanded') === 'true') closeMenu();
   else openMenu();
 });
-
 mobileMenu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => closeMenu()));
-
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && menuToggle?.getAttribute('aria-expanded') === 'true') {
-    closeMenu({ returnFocus: true });
-  }
+  if (event.key === 'Escape' && menuButton?.getAttribute('aria-expanded') === 'true') closeMenu(true);
 });
-
 window.addEventListener('resize', () => {
-  if (window.innerWidth > 1040) closeMenu();
+  if (window.innerWidth > 1080) closeMenu();
 }, { passive: true });
 
 document.querySelectorAll('[data-accordion]').forEach((accordion) => {
   accordion.querySelectorAll('details').forEach((details) => {
     details.addEventListener('toggle', () => {
       if (!details.open) return;
-      accordion.querySelectorAll('details[open]').forEach((openDetails) => {
-        if (openDetails !== details) openDetails.open = false;
+      accordion.querySelectorAll('details[open]').forEach((openItem) => {
+        if (openItem !== details) openItem.open = false;
       });
     });
   });
@@ -79,9 +71,9 @@ document.querySelectorAll('[data-accordion]').forEach((accordion) => {
 const visitForm = document.querySelector('[data-visit-form]');
 if (visitForm) {
   const dateInput = visitForm.querySelector('input[type="date"]');
-  const today = new Date();
-  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-  dateInput?.setAttribute('min', localToday);
+  const now = new Date();
+  const today = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+  dateInput?.setAttribute('min', today);
 
   visitForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -91,10 +83,10 @@ if (visitForm) {
     const summary = visitForm.querySelector('[data-visit-summary]');
     if (!summary) return;
 
-    const preferredDate = new Date(`${data.get('visitDate')}T12:00:00`);
-    const formattedDate = Number.isNaN(preferredDate.getTime())
+    const date = new Date(`${data.get('visitDate')}T12:00:00`);
+    const formattedDate = Number.isNaN(date.getTime())
       ? String(data.get('visitDate'))
-      : new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(preferredDate);
+      : new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
 
     summary.replaceChildren();
 
@@ -121,11 +113,11 @@ if (visitForm) {
     note.textContent = 'Keep this page open or print the plan. No details have been sent or stored by the website.';
     summary.append(note);
 
-    const printButton = document.createElement('button');
-    printButton.type = 'button';
-    printButton.textContent = 'Print this visit plan';
-    printButton.addEventListener('click', () => window.print());
-    summary.append(printButton);
+    const print = document.createElement('button');
+    print.type = 'button';
+    print.textContent = 'Print this visit plan';
+    print.addEventListener('click', () => window.print());
+    summary.append(print);
 
     summary.hidden = false;
     summary.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' });
