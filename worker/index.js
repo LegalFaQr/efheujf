@@ -1,11 +1,14 @@
 const programmes = new Set(['Pre-Nursery', 'Nursery', 'LKG', 'UKG', 'Daycare', 'Help me choose']);
 const ages = new Set(['Under 2', '2', '3', '4', '5', '6+']);
-const json = (data, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+const json = (data, status = 200, extraHeaders = {}) => Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...extraHeaders } });
 const clean = value => typeof value === 'string' ? value.trim().replace(/[\u0000-\u001f]/g, '') : '';
+// The site's frontend is also hosted on GitHub Pages under this custom domain, so admissions API calls from there are cross-origin.
+const ALLOWED_ORIGINS = new Set(['https://kabirainternational.com', 'https://www.kabirainternational.com']);
+const corsHeaders = origin => ({ 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', Vary: 'Origin' });
 // Fixed server-side destination — never read from the request, so it cannot be changed via dev tools or a forged submission.
 const NOTIFY_EMAIL = 'kabiraschool.in@gmail.com';
 // Shared secret for the Excel export below. Hardcoded (not an environment secret) so no account/credential setup is required to deploy this. Change it any time by editing this file.
-export const EXPORT_KEY = 'fa144e4748cdacd127c64487b10bf981598e32c6246c60d2';
+export const EXPORT_KEY = '8d0kvga1sxq375r2pwmzft9nui4lj6bechoy';
 // Lightweight branded 404 — kept inline rather than as a dist page to avoid extra build/routing complexity.
 const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Kabira The International School</title><meta name="robots" content="noindex"><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#102851;color:#fff;font:18px/1.6 'DM Sans',sans-serif;text-align:center;padding:24px}main{max-width:440px}h1{font:400 32px/1.2 'Playfair Display',Georgia,serif;margin:0 0 16px}p{color:#c9d6e8;margin:0 0 28px}a{display:inline-flex;padding:14px 24px;background:#94b862;color:#0b203f;text-decoration:none;font-weight:500}</style></head><body><main><h1>This page has wandered off.</h1><p>The page you're looking for doesn't exist. Let's get you back to Kabira The International School.</p><a href="/">Back to home ↗</a></main></body></html>`;
 
@@ -137,38 +140,42 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/admissions') {
+      const origin = request.headers.get('origin');
+      const allowedOrigin = origin === url.origin || ALLOWED_ORIGINS.has(origin);
+      if (request.method === 'OPTIONS') return allowedOrigin ? new Response(null, { status: 204, headers: corsHeaders(origin) }) : new Response(null, { status: 403 });
       if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
-      if (request.headers.get('origin') !== url.origin || request.headers.get('sec-fetch-site') === 'cross-site') return json({ error: 'Please submit your enquiry from the Kabira website.' }, 403);
-      if (!request.headers.get('content-type')?.startsWith('application/json')) return json({ error: 'Please use the admissions form on this website.' }, 415);
-      if (Number(request.headers.get('content-length') || 0) > 8192) return json({ error: 'This enquiry is too large.' }, 413);
+      if (!allowedOrigin) return json({ error: 'Please submit your enquiry from the Kabira website.' }, 403);
+      const cors = corsHeaders(origin);
+      if (!request.headers.get('content-type')?.startsWith('application/json')) return json({ error: 'Please use the admissions form on this website.' }, 415, cors);
+      if (Number(request.headers.get('content-length') || 0) > 8192) return json({ error: 'This enquiry is too large.' }, 413, cors);
       let input;
       try {
         const reader = request.body?.getReader();
         const chunks = []; let length = 0;
-        if (!reader) return json({ error: 'Please complete the form.' }, 400);
+        if (!reader) return json({ error: 'Please complete the form.' }, 400, cors);
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           length += value.length;
-          if (length > 8192) { await reader.cancel(); return json({ error: 'This enquiry is too large.' }, 413); }
+          if (length > 8192) { await reader.cancel(); return json({ error: 'This enquiry is too large.' }, 413, cors); }
           chunks.push(value);
         }
         const bytes = new Uint8Array(length); let offset = 0;
         for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
         input = JSON.parse(new TextDecoder().decode(bytes));
-      } catch { return json({ error: 'Please check your form and try again.' }, 400); }
+      } catch { return json({ error: 'Please check your form and try again.' }, 400, cors); }
       const checked = validateAdmission(input);
-      if (checked.error) return json({ error: checked.error }, 400);
+      if (checked.error) return json({ error: checked.error }, 400, cors);
       try {
         if (!env.DB) throw new Error('Missing admissions database');
         const saved = await saveAdmission(env.DB, checked.value);
-        if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429);
+        if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429, cors);
         const notify = notifyAdmission(checked.value);
         if (ctx?.waitUntil) ctx.waitUntil(notify); else await notify;
-        return json({ ok: true, reference: checked.value.id, message: 'Thank you. Your admission enquiry has been received by Kabira.' }, 201);
+        return json({ ok: true, reference: checked.value.id, message: 'Thank you. Your admission enquiry has been received by Kabira.' }, 201, cors);
       } catch {
         console.error('Admissions storage unavailable');
-        return json({ error: 'We could not save your enquiry right now. Your details are still in the form; please try again shortly.' }, 503);
+        return json({ error: 'We could not save your enquiry right now. Your details are still in the form; please try again shortly.' }, 503, cors);
       }
     }
     if (url.pathname === '/api/admissions/export' && request.method === 'GET') {

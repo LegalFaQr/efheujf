@@ -1,3 +1,5 @@
+// The frontend is hosted on GitHub Pages; the admissions API lives on the deployed Cloudflare Worker.
+const ADMISSIONS_API_BASE = 'https://kabira-international-school.kabiraswebsite.workers.dev';
 const form = document.querySelector('#admission-form');
 if (form) {
   const programmeField = form.querySelector('select[name=programme]');
@@ -25,7 +27,7 @@ if (form) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
     try {
-      const response = await fetch('/api/admissions', {
+      const response = await fetch(`${ADMISSIONS_API_BASE}/api/admissions`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload), signal: controller.signal,
       });

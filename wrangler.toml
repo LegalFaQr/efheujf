@@ -6,4 +6,4 @@ compatibility_date = "2024-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "kabira-admissions"
-database_id = "REPLACE_WITH_THE_ID_PRINTED_BY_WRANGLER_D1_CREATE"
+database_id = "8ad4f8b1-44b9-4731-9667-de2c98832bb9"
