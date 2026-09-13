@@ -86,8 +86,10 @@
 @media(max-width:960px){.programme-journey{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.programme-journey{grid-template-columns:1fr}.eligibility-list{grid-template-columns:1fr}}
 .mt-30{margin-top:30px}
-.editorial-intro{max-width:660px;margin-bottom:36px}
+/* Long-form narrative measure. Short marketing/CTA intros use .wide instead, so a single sentence doesn't wrap prematurely on wide desktop canvases. */
+.editorial-intro{max-width:720px;margin-bottom:36px}
 .editorial-intro p:not(.eyebrow){margin-top:20px;color:var(--muted);font-size:18px;line-height:1.65}
+.editorial-intro.wide{max-width:960px}
 .stage-path{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin-bottom:24px}
 .stage-path a{color:var(--green);border-bottom:1px solid var(--line);padding-bottom:2px}
 .stage-path strong{color:var(--navy);font-weight:600}
@@ -106,11 +108,17 @@
 /* Reusable end-of-section CTA: heading/intro on the left, action(s) on the right, on one vertical anchor — replaces the old stacked markup that left half the row empty. */
 .cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:26px 40px}
 .cta-row .editorial-intro{margin-bottom:0;flex:1 1 380px}
-.cta-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px;flex:0 0 auto}
+.cta-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px;flex:0 1 auto;min-width:0}
 /* Admissions "what to prepare" text was a narrow column next to a full-width card below it; make it a true two-column row instead. */
 .prepare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8%;align-items:start}
 .prepare-grid .editorial-intro{max-width:none;margin-bottom:0}
 /* Exactly four enrichment cards left the fourth stranded alone in a three-column grid; two even columns fill the row. */
 #experiences .philosophy-grid{grid-template-columns:repeat(2,1fr)}
+/* "Our Belief" and "Our Vision" were two short, nearly-empty full-width rows; pair them as a balanced two-column composition on desktop. */
+.belief-vision{display:grid;grid-template-columns:1fr 1fr;gap:8%;align-items:start}
+.belief-vision .editorial-intro{max-width:none;margin-bottom:0}
+/* Visit Kabira's short sentence was wrapping early inside a narrow stacked column; give it a real column beside the campus photo. */
+.visit-split{display:grid;grid-template-columns:1.05fr .95fr;gap:8%;align-items:center}
+.visit-split .editorial-intro{max-width:none;margin-bottom:0}
+@media(max-width:760px){#experiences .philosophy-grid{grid-template-columns:1fr}.belief-vision{grid-template-columns:1fr;gap:40px}.visit-split{grid-template-columns:1fr;gap:26px}}
 @media(max-width:900px){.prepare-grid{grid-template-columns:1fr;gap:30px}}
-@media(max-width:760px){#experiences .philosophy-grid{grid-template-columns:1fr}}
