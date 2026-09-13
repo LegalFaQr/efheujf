@@ -39,7 +39,7 @@ class Page(HTMLParser):
             self.tabs.append(a)
 
 texts = {p.name: p.read_text(encoding='utf-8') for p in dist.glob('*.html')}
-expected_pages = {'index.html', 'about.html', 'experience.html', 'programmes.html', 'pre-nursery.html', 'nursery.html', 'lkg.html', 'ukg.html', 'daycare.html', 'admissions.html'}
+expected_pages = {'index.html', 'about.html', 'experience.html', 'programmes.html', 'pre-nursery.html', 'nursery.html', 'lkg.html', 'ukg.html', 'daycare.html', 'enrichment.html', 'inclusive-learning.html', 'admissions.html'}
 assert set(texts) == expected_pages, 'Expected the full multi-page site'
 pages = {name: Page(text) for name, text in texts.items()}
 banned_phrases = ['the same one you', 'our gate on patiala road', 'step through our gates', "where your child's journey begins"]
@@ -57,7 +57,9 @@ for name, page in pages.items():
         if not urlsplit(asset).scheme:
             assert (dist / asset).is_file(), f'Missing asset: {asset}'
     assert all('alt' in a and 'width' in a and 'height' in a for a in page.images)
-    assert not re.search(r'mailto:|9988369035|@gmail', texts[name], re.I)
+    assert not re.search(r'9988369035|@gmail', texts[name], re.I)
+    for email in re.findall(r'mailto:([^"\'>]+)', texts[name]):
+        assert email == 'info@kabirainternational.com', f'Unexpected email on {name}: {email}'
     for tel in re.findall(r'tel:([^"\'>]+)', texts[name]):
         assert tel == '+919115104300', f'Unexpected phone number on {name}: {tel}'
     for wa in re.findall(r'wa\.me/(\d+)', texts[name]):
