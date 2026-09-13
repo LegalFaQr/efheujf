@@ -6,8 +6,6 @@ import re
 import subprocess
 
 root = Path(__file__).resolve().parent
-if root.name == '.sites-runtime':
-    root = root.parent
 dist = root / 'dist'
 
 class Page(HTMLParser):

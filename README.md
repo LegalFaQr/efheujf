@@ -1,6 +1,6 @@
 # Kabira The International School
 
-Responsive, dependency-free multi-page website for Kabira The International School (Zirakpur), hosted through the existing Sites project. The site source lives in `dist/`; there is no frontend framework or bundler.
+Responsive, dependency-free multi-page website for Kabira The International School (Zirakpur). The site source lives in `dist/`; there is no frontend framework or bundler. Deploys independently to Cloudflare Workers + D1 (see below).
 
 ## Project structure
 - `dist/` — the 12 site pages plus `styles.css` / `admissions.css` / `app.js` / `admissions.js` and static `assets/`. This is hand-authored source, not a build artifact.
@@ -34,7 +34,7 @@ All saved admissions can be downloaded as a real `.xlsx` workbook from:
 `EXPORT_KEY` is a constant defined at the top of `worker/index.js`. Requests with a missing or incorrect key get an identical 404, so the endpoint can't be probed.
 
 ## Deploy to your own Cloudflare account
-This repo includes `wrangler.toml`, so it can also be deployed independently of the Sites project, on Cloudflare's free tier.
+This repo deploys via `wrangler.toml` to your own free Cloudflare Workers + D1 account.
 
 1. `npm install -D wrangler` — installs the Cloudflare CLI as a dev dependency.
 2. `npx wrangler login` — opens a browser to connect your (free) Cloudflare account.
@@ -45,9 +45,7 @@ This repo includes `wrangler.toml`, so it can also be deployed independently of 
 Wrangler prints a live `*.workers.dev` URL when it finishes — that's your working site, admissions form included. A custom domain can be attached afterwards from the Cloudflare dashboard if you have one.
 
 ## Folders you can ignore
-`node_modules/`, `.asset-sources/`, `.sites-runtime/`, `dist/server/` and `dist/.openai/` are all git-ignored — regenerated or platform-managed, not part of the tracked repository.
-
-- Report updates: Bhattacharya Educational Trust, Grow · Learn · Bloom, and conditional long-term expansion towards Class X.
+`node_modules/`, `.asset-sources/`, `.sites-runtime/`, `dist/server/` and `.wrangler/` are all git-ignored — regenerated or platform-managed, not part of the tracked repository.
 - Phone numbers, email addresses, messaging links, internal finances and staffing plans are excluded. Higher classes are not advertised as currently available.
 
 ## Files
