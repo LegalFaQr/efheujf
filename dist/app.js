@@ -60,3 +60,5 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
   document.body.classList.add('motion-ready');
   reducedMotion.addEventListener('change', e => { if(e.matches) { document.body.classList.remove('motion-ready'); observer.disconnect(); } });
 }
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });

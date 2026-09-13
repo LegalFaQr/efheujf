@@ -1,6 +1,8 @@
 @charset "UTF-8";
 /* Extensions use the existing Kabira palette, type and section rhythm. */
 :root{--surface-base:#fff;--surface-green-soft:var(--mist);--surface-navy-soft:#eef1f6;--surface-lime-soft:#f6f7e9;--surface-neutral:#f7f6f2;--text-primary:var(--ink);--text-secondary:var(--muted);--text-on-dark:#e7ecf3;--border-soft:var(--line);--border-brand:#b7c7ab}
+/* Discourage casual image saving/dragging site-wide; paired with the contextmenu/dragstart block in app.js. */
+img{-webkit-user-drag:none;user-drag:none;-webkit-user-select:none;user-select:none}
 .surface-green{background:var(--surface-green-soft)}
 .surface-navy-soft{background:var(--surface-navy-soft)}
 .surface-neutral{background:var(--surface-neutral)}
