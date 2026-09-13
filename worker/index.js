@@ -12,21 +12,6 @@ export const EXPORT_KEY = '8d0kvga1sxq375r2pwmzft9nui4lj6bechoy';
 // Lightweight branded 404 — kept inline rather than as a dist page to avoid extra build/routing complexity.
 const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Kabira The International School</title><meta name="robots" content="noindex"><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#102851;color:#fff;font:18px/1.6 'DM Sans',sans-serif;text-align:center;padding:24px}main{max-width:440px}h1{font:400 32px/1.2 'Playfair Display',Georgia,serif;margin:0 0 16px}p{color:#c9d6e8;margin:0 0 28px}a{display:inline-flex;padding:14px 24px;background:#94b862;color:#0b203f;text-decoration:none;font-weight:500}</style></head><body><main><h1>This page has wandered off.</h1><p>The page you're looking for doesn't exist. Let's get you back to Kabira The International School.</p><a href="/">Back to home ↗︎</a></main></body></html>`;
 
-// Verifies a Cloudflare Turnstile token server-side. Returns true if valid.
-async function verifyTurnstile(token, secret, ip) {
-  try {
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ secret, response: token, remoteip: ip }),
-    });
-    const data = await res.json();
-    return data.success === true;
-  } catch {
-    return false;
-  }
-}
-
 // Sends a best-effort admission notification email via Resend. Never throws, so it can never break the enquiry response.
 async function notifyAdmission(data, resendApiKey) {
   try {
@@ -189,11 +174,6 @@ export default {
         for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
         input = JSON.parse(new TextDecoder().decode(bytes));
       } catch { return json({ error: 'Please check your form and try again.' }, 400, cors); }
-      // Verify Turnstile token before anything else
-      const turnstileToken = typeof input?.turnstileToken === 'string' ? input.turnstileToken : '';
-      if (!turnstileToken) return json({ error: 'Please complete the security check and try again.' }, 400, cors);
-      const turnstileOk = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, request.headers.get('cf-connecting-ip'));
-      if (!turnstileOk) return json({ error: 'Security check failed. Please refresh the page and try again.' }, 403, cors);
       const checked = validateAdmission(input);
       if (checked.error) return json({ error: checked.error }, 400, cors);
       try {
