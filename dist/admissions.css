@@ -57,6 +57,7 @@
 .programme-journey-card:hover{transform:translateY(-4px);border-color:var(--green)}
 .programme-journey-card span{font-size:12px;letter-spacing:.09em;color:var(--green)}
 .programme-journey-card strong{font:24px var(--serif);color:var(--navy);font-weight:400}
+.programme-journey-card small{font-size:12px;letter-spacing:.03em;color:var(--muted)}
 .programme-journey-card em{font-style:normal;font-size:14px;color:var(--muted)}
 .programme-stack>.programme-panel+.programme-panel{margin-top:40px}
 .eligibility-list{list-style:none;margin:26px 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:10px 20px;font-size:16px}
@@ -66,5 +67,15 @@
 @media(max-width:960px){.programme-journey{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.programme-journey{grid-template-columns:1fr}.eligibility-list{grid-template-columns:1fr}}
 .mt-30{margin-top:30px}
+.stage-path{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin-bottom:24px}
+.stage-path a{color:var(--green);border-bottom:1px solid var(--line);padding-bottom:2px}
+.stage-path strong{color:var(--navy);font-weight:600}
+.stage-path span{font-size:12px;color:var(--muted)}
+.programme-meta{display:grid;grid-template-columns:repeat(3,1fr);margin-top:34px;border:1px solid var(--line);background:var(--mist)}
+.programme-meta div{padding:18px 22px;border-right:1px solid var(--line)}
+.programme-meta div:last-child{border-right:0}
+.programme-meta span{display:block;font-size:12px;letter-spacing:.09em;color:var(--green);margin-bottom:6px}
+.programme-meta strong{display:block;font:22px var(--serif);color:var(--navy);font-weight:400}
+@media(max-width:760px){.programme-meta{grid-template-columns:1fr}.programme-meta div{border-right:0;border-bottom:1px solid var(--line)}.programme-meta div:last-child{border-bottom:0}}
 @media(max-width:1180px){.leadership-profile{gap:6%;grid-template-columns:.85fr 1.15fr}.admissions-form-layout{gap:5%;grid-template-columns:.8fr 1.2fr}.admission-form{padding:26px}.form-row{gap:13px}}
 @media(max-width:760px){.leadership-profile,.admissions-form-layout{grid-template-columns:1fr;gap:30px}.director-photo{max-width:440px;width:100%;margin-inline:auto}.director-photo figcaption{font-size:13px}.leadership-profile .leadership-copy h2{font-size:36px}.leadership-perspective{display:block;margin-top:25px;padding:24px}.leadership-perspective h3{margin-bottom:14px}.admissions-form-layout h2{font-size:40px}.admission-form{padding:23px}.form-row{grid-template-columns:1fr;gap:0}.admission-form label:not(.consent-label){font-size:14px}.form-brand h3{font-size:23px}.form-brand img{width:45px;height:45px}.visit-media{gap:18px}.campus-photo figcaption{font-size:13px}.school-map iframe{height:350px}.school-map figcaption{font-size:13px}.admission-next-steps{margin-top:20px;padding-top:21px}}
