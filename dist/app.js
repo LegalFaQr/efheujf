@@ -25,9 +25,18 @@ const navAdmissions = document.querySelector('#nav-admissions');
 const pageCtas = [...document.querySelectorAll('.page-cta')];
 if (navAdmissions && pageCtas.length && 'IntersectionObserver' in window) {
   const setVisible = visible => {
-    navAdmissions.classList.toggle('is-hidden', !visible);
     navAdmissions.tabIndex = visible ? 0 : -1;
+    if (visible) {
+      navAdmissions.classList.remove('is-collapsed');
+      void navAdmissions.offsetWidth;
+      navAdmissions.classList.remove('is-hidden');
+    } else {
+      navAdmissions.classList.add('is-hidden');
+    }
   };
+  navAdmissions.addEventListener('transitionend', e => {
+    if (e.propertyName === 'opacity' && navAdmissions.classList.contains('is-hidden')) navAdmissions.classList.add('is-collapsed');
+  });
   const visibleCtas = new Set();
   const ctaObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => { if (entry.isIntersecting) visibleCtas.add(entry.target); else visibleCtas.delete(entry.target); });

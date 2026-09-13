@@ -1,11 +1,10 @@
 @charset "UTF-8";
 /* Extensions use the existing Kabira palette, type and section rhythm. */
 :root{--surface-base:#fff;--surface-green-soft:var(--mist);--surface-navy-soft:#eef1f6;--surface-lime-soft:#f6f7e9;--surface-neutral:#f7f6f2;--text-primary:var(--ink);--text-secondary:var(--muted);--text-on-dark:#e7ecf3;--border-soft:var(--line);--border-brand:#b7c7ab}
-.surface-green{background:var(--surface-green-soft);border-top:1px solid var(--border-soft)}
-.surface-navy-soft{background:var(--surface-navy-soft);border-top:1px solid var(--border-soft)}
-.surface-neutral{background:var(--surface-neutral);border-top:1px solid var(--border-soft)}
-.surface-lime-soft{background:var(--surface-lime-soft);border-top:1px solid var(--border-soft)}
-#daycare-preview{border-top:1px solid var(--border-soft)}
+.surface-green{background:var(--surface-green-soft)}
+.surface-navy-soft{background:var(--surface-navy-soft)}
+.surface-neutral{background:var(--surface-neutral)}
+.surface-lime-soft{background:var(--surface-lime-soft)}
 .button-secondary{background:var(--surface-green-soft);color:var(--navy);border-color:var(--border-brand)}
 .button-secondary:hover{background:var(--surface-navy-soft);border-color:var(--navy)}
 /* Reused pillar/development cards get real surface depth instead of a bare top rule. */
@@ -16,11 +15,11 @@
 .experience-heading .learning-topics{color:var(--navy);border-top-color:var(--border-soft)}
 .experience-heading .learning-topics span{font-weight:500}
 .leadership-profile{display:grid;grid-template-columns:.8fr 1.2fr;gap:8%;align-items:start}
-@media(min-width:761px){#nav-admissions.is-hidden{opacity:0;pointer-events:none}#nav-admissions{transition:opacity .25s}}
-.whatsapp-bubble{position:fixed;right:22px;bottom:22px;z-index:50;width:56px;height:56px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px #0b203f40;transition:transform .2s}
+@media(min-width:761px){#nav-admissions.is-hidden{opacity:0;pointer-events:none}#nav-admissions{transition:opacity .2s}#nav-admissions.is-collapsed{display:none}}
+.whatsapp-bubble{position:fixed;right:16px;bottom:16px;z-index:50;width:52px;height:52px;border-radius:50%;background:#25d366;display:none;align-items:center;justify-content:center;box-shadow:0 8px 24px #0b203f40;transition:transform .2s}
 .whatsapp-bubble:hover{transform:scale(1.07)}
-.whatsapp-bubble svg{width:29px;height:29px;fill:#fff}
-@media(max-width:760px){.whatsapp-bubble{right:16px;bottom:16px;width:52px;height:52px}.whatsapp-bubble svg{width:26px;height:26px}}
+.whatsapp-bubble svg{width:26px;height:26px;fill:#fff}
+@media(max-width:760px){.whatsapp-bubble{display:flex}}
 .director-photo img{width:100%;height:auto;object-fit:contain}
 .director-photo figcaption{padding:18px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;color:var(--muted);font-size:14px}
 .director-photo figcaption strong{font:25px var(--serif);color:var(--navy);margin-bottom:5px}
