@@ -17,7 +17,8 @@ async function notifyAdmission(data) {
   try {
     const response = await fetch(`https://formsubmit.co/ajax/${NOTIFY_EMAIL}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      // FormSubmit ties activation to the Referer's domain; this fetch runs server-side so a browser-supplied Referer is never present.
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Referer: 'https://kabirainternational.com/' },
       body: JSON.stringify({
         _subject: `New admission enquiry — ${data.childFirstName} (${data.programme})`,
         _template: 'table',
@@ -31,9 +32,9 @@ async function notifyAdmission(data) {
         Message: data.message || '—',
       }),
     });
-    if (!response.ok) console.error('Admission notification email failed', response.status);
-  } catch {
-    console.error('Admission notification email failed');
+    if (!response.ok) console.error('Admission notification email failed', response.status, await response.text().catch(() => ''));
+  } catch (error) {
+    console.error('Admission notification email failed', error);
   }
 }
 
