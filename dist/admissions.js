@@ -17,7 +17,11 @@ if (form) {
     const values = new FormData(form);
     const payload = Object.fromEntries(values);
     payload.consent = values.get('consent') === 'on';
-    const snapshot = JSON.stringify(payload);
+    // Extract Turnstile token (auto-injected as cf-turnstile-response by the widget)
+    const turnstileToken = values.get('cf-turnstile-response') || '';
+    payload.turnstileToken = turnstileToken;
+    delete payload['cf-turnstile-response'];
+    const snapshot = JSON.stringify({ ...payload, turnstileToken: '' });
     if (snapshot !== previousPayload || !pendingId) pendingId = crypto.randomUUID();
     previousPayload = snapshot;
     payload.requestId = pendingId;
@@ -36,9 +40,11 @@ if (form) {
       status.dataset.state = 'success';
       status.textContent = `Thank you. Your enquiry has been received by Kabira. Reference: ${result.reference.slice(0, 8).toUpperCase()}. This is an enquiry, not confirmation of admission — you're also welcome to call or WhatsApp us on +91 91151 04300 any time.`;
       form.reset(); pendingId = null; previousPayload = null;
+      if (window.turnstile) window.turnstile.reset();
     } catch (error) {
       status.dataset.state = 'error';
       status.textContent = error.name === 'AbortError' ? 'We could not confirm receipt yet. Your details are still here. Please retry; the same enquiry will not be saved twice.' : error.message;
+      if (window.turnstile) window.turnstile.reset();
     } finally {
       clearTimeout(timeout);
       button.disabled = false;
