@@ -33,6 +33,17 @@ All saved admissions can be downloaded as a real `.xlsx` workbook from:
 ```
 `EXPORT_KEY` is a constant defined at the top of `worker/index.js`. Requests with a missing or incorrect key get an identical 404, so the endpoint can't be probed.
 
+## Deploy to your own Cloudflare account
+This repo includes `wrangler.toml`, so it can also be deployed independently of the Sites project, on Cloudflare's free tier.
+
+1. `npm install -D wrangler` — installs the Cloudflare CLI as a dev dependency.
+2. `npx wrangler login` — opens a browser to connect your (free) Cloudflare account.
+3. `npx wrangler d1 create kabira-admissions` — creates the database and prints a `database_id`. Paste that ID into `wrangler.toml` in place of `REPLACE_WITH_THE_ID_PRINTED_BY_WRANGLER_D1_CREATE`.
+4. `npm run db:migrate:remote` — applies `drizzle/0000_glorious_karnak.sql` to the new remote database.
+5. `npm run deploy` — builds `dist/server/index.js` and runs `wrangler deploy`.
+
+Wrangler prints a live `*.workers.dev` URL when it finishes — that's your working site, admissions form included. A custom domain can be attached afterwards from the Cloudflare dashboard if you have one.
+
 ## Folders you can ignore
 `node_modules/`, `.asset-sources/`, `.sites-runtime/`, `dist/server/` and `dist/.openai/` are all git-ignored — regenerated or platform-managed, not part of the tracked repository.
 
