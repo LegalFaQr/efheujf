@@ -42,7 +42,7 @@ if (form) {
     } finally {
       clearTimeout(timeout);
       button.disabled = false;
-      button.textContent = 'Send admission enquiry ↗';
+      button.textContent = 'Send admission enquiry ↗︎';
       status.focus();
     }
   });
