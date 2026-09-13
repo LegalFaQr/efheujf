@@ -1,18 +1,41 @@
 # Kabira The International School
 
-Responsive school website in `dist/`, privately hosted through the existing Sites project.
+Responsive, dependency-free multi-page website for Kabira The International School (Zirakpur), hosted through the existing Sites project. The site source lives in `dist/`; there is no frontend framework or bundler.
 
-## Preview
-Run `python -m http.server 4173 --directory dist` and open `http://127.0.0.1:4173`.
+## Project structure
+- `dist/` — the 12 site pages plus `styles.css` / `admissions.css` / `app.js` / `admissions.js` and static `assets/`. This is hand-authored source, not a build artifact.
+- `worker/index.js` — the single-file Cloudflare Worker: serves `dist/` pages/assets, and powers the admissions API (`/api/admissions`) and the admin Excel export (`/api/admissions/export`).
+- `db/schema.ts`, `drizzle/`, `drizzle.config.ts` — the D1 admissions database schema and its SQL migration.
+- `scripts/build-worker.mjs` — bundles `dist/*` (base64-encoded) with `worker/index.js` into `dist/server/index.js` for deployment. No other build step exists.
+- `tests/admissions.test.mjs` — Node's built-in test runner against the Worker, using an in-memory SQLite database as a D1 stand-in.
+- `validate-site.py` — structural/content checks over `dist/` (unique IDs, one `<h1>` per page, working internal links, image alt/dimensions, protected CSS baseline, contact-info guards).
 
-## September redesign
-- Parent journey: admissions and age groups, learning experience, leadership and care, school identity and values, future growth, admissions process and visit information.
-- Compact 64px mobile header, explicit admissions link and persistent bottom parent actions.
-- Keyboard-accessible programme tabs, responsive uniform dialog, mobile navigation and FAQs.
-- Entry animations, scroll reveals, staggered content and interaction transitions. Reduced-motion preference is respected.
-- New supplied high-resolution Logo.jpg copied without altering the artwork.
-- Four regenerated illustrative assets with Kabira uniform branding, including a full-length uniform collection. Intrinsic proportions and contain sizing prevent cropping.
-- Optimised JPEG exports and 768px responsive sources reduce mobile transfer size.
+## Preview locally
+```
+python -m http.server 4173 --directory dist
+```
+Then open `http://127.0.0.1:4173`.
+
+## Common commands
+```
+npm test              # run the Worker/admissions test suite
+npm run build          # bundle dist/ + worker/index.js into dist/server/index.js
+npm run db:generate     # regenerate a Drizzle migration after editing db/schema.ts
+python validate-site.py
+```
+
+## Admissions backend
+Submissions to the admissions form are saved to the D1 `admissions` table (rate-limited per phone number) and trigger a best-effort notification email via [FormSubmit.co](https://formsubmit.co) to a fixed, server-side address — no API key or paid service required. The notification destination is hardcoded in `worker/index.js` and is never read from the request, so it cannot be changed from the browser.
+
+All saved admissions can be downloaded as a real `.xlsx` workbook from:
+```
+/api/admissions/export?key=<EXPORT_KEY>
+```
+`EXPORT_KEY` is a constant defined at the top of `worker/index.js`. Requests with a missing or incorrect key get an identical 404, so the endpoint can't be probed.
+
+## Folders you can ignore
+`node_modules/`, `.asset-sources/`, `.sites-runtime/`, `dist/server/` and `dist/.openai/` are all git-ignored — regenerated or platform-managed, not part of the tracked repository.
+
 - Report updates: Bhattacharya Educational Trust, Grow · Learn · Bloom, and conditional long-term expansion towards Class X.
 - Phone numbers, email addresses, messaging links, internal finances and staffing plans are excluded. Higher classes are not advertised as currently available.
 
