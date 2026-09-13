@@ -49,6 +49,8 @@ for name, page in pages.items():
         if parts.scheme or parts.netloc:
             continue
         target = parts.path or name
+        if target == '/':
+            target = 'index.html'
         assert target in pages, f'Missing route: {name} -> {link}'
         assert not parts.fragment or unquote(parts.fragment) in pages[target].ids, f'Missing anchor: {name} -> {link}'
     for asset in page.assets:
