@@ -39,8 +39,10 @@ class Page(HTMLParser):
             self.tabs.append(a)
 
 texts = {p.name: p.read_text(encoding='utf-8') for p in dist.glob('*.html')}
-assert set(texts) == {'index.html', 'experience.html'}, 'Expected exactly two pages'
+expected_pages = {'index.html', 'about.html', 'experience.html', 'programmes.html', 'pre-nursery.html', 'nursery.html', 'lkg.html', 'ukg.html', 'daycare.html', 'admissions.html'}
+assert set(texts) == expected_pages, 'Expected the full multi-page site'
 pages = {name: Page(text) for name, text in texts.items()}
+banned_phrases = ['the same one you', 'our gate on patiala road', 'step through our gates', "where your child's journey begins"]
 for name, page in pages.items():
     assert len(page.ids) == len(set(page.ids)), f'Duplicate ID on {name}'
     assert page.h1s == 1, f'Expected one primary heading on {name}'
@@ -57,13 +59,15 @@ for name, page in pages.items():
     assert all('alt' in a and 'width' in a and 'height' in a for a in page.images)
     assert not re.search(r'mailto:|tel:|wa\.me|9988369035|@gmail', texts[name], re.I)
     assert '<link rel="canonical"' in texts[name]
-assert not pages['index.html'].tabs
-assert len(pages['experience.html'].tabs) == 4
-assert sum(t.get('aria-selected') == 'true' for t in pages['experience.html'].tabs) == 1
-assert all(t['aria-controls'] in pages['experience.html'].ids for t in pages['experience.html'].tabs)
-assert 'uniform-dialog' not in pages['index.html'].ids
-assert 'uniform-dialog' in pages['experience.html'].ids
+    lowered = texts[name].lower()
+    for phrase in banned_phrases:
+        assert phrase not in lowered, f'Invented campus narrative found on {name}: {phrase!r}'
+assert not any(page.tabs for page in pages.values()), 'Programme tabs should be replaced by dedicated programme pages'
+assert 'uniform-dialog' not in pages['index.html'].ids and 'uniform-dialog' not in pages['experience.html'].ids
+assert 'uniform-dialog' in pages['admissions.html'].ids
 assert 'Dr. Rita Rattan' in texts['index.html'] and 'Director & Principal' in texts['index.html']
+assert 'Dr. Rita Rattan' in texts['about.html'] and 'Director & Principal' in texts['about.html']
+
 
 # Only the green palette and selectors giving the new semantic h1 its original h2
 # appearance may differ from the design the user approved.
@@ -77,4 +81,4 @@ assert css == expected_css, 'An unexpected visual style changed'
 assert css.count('{') == css.count('}')
 assert 'object-fit:cover' not in css
 assert 'prefers-reduced-motion' in css
-print(json.dumps({'pages': 2, 'cross_page_links': 'pass', 'assets': 'pass', 'programmes_and_uniforms': 'pass', 'contact_exclusions': 'pass', 'original_visual_styles': 'preserved except approved green palette', 'primary_headings': 'one per page'}))
+print(json.dumps({'pages': len(pages), 'cross_page_links': 'pass', 'assets': 'pass', 'contact_exclusions': 'pass', 'campus_image_policy': 'pass', 'original_visual_styles': 'preserved except approved green palette', 'primary_headings': 'one per page'}))
