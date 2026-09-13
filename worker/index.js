@@ -12,27 +12,51 @@ export const EXPORT_KEY = '8d0kvga1sxq375r2pwmzft9nui4lj6bechoy';
 // Lightweight branded 404 — kept inline rather than as a dist page to avoid extra build/routing complexity.
 const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Kabira The International School</title><meta name="robots" content="noindex"><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#102851;color:#fff;font:18px/1.6 'DM Sans',sans-serif;text-align:center;padding:24px}main{max-width:440px}h1{font:400 32px/1.2 'Playfair Display',Georgia,serif;margin:0 0 16px}p{color:#c9d6e8;margin:0 0 28px}a{display:inline-flex;padding:14px 24px;background:#94b862;color:#0b203f;text-decoration:none;font-weight:500}</style></head><body><main><h1>This page has wandered off.</h1><p>The page you're looking for doesn't exist. Let's get you back to Kabira The International School.</p><a href="/">Back to home ↗︎</a></main></body></html>`;
 
-// Sends a best-effort admission notification email via FormSubmit.co — free, no account or API key needed. Never throws, so it can never break the enquiry response.
-async function notifyAdmission(data) {
+// Verifies a Cloudflare Turnstile token server-side. Returns true if valid.
+async function verifyTurnstile(token, secret, ip) {
   try {
-    const response = await fetch(`https://formsubmit.co/ajax/${NOTIFY_EMAIL}`, {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
-      // FormSubmit ties activation to the Referer's domain; this fetch runs server-side so a browser-supplied Referer is never present.
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Referer: 'https://kabirainternational.com/' },
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret, response: token, remoteip: ip }),
+    });
+    const data = await res.json();
+    return data.success === true;
+  } catch {
+    return false;
+  }
+}
+
+// Sends a best-effort admission notification email via Resend. Never throws, so it can never break the enquiry response.
+async function notifyAdmission(data, resendApiKey) {
+  try {
+    const html = `
+      <table style="font-family:sans-serif;font-size:15px;border-collapse:collapse;width:100%;max-width:560px">
+        <tr><td colspan="2" style="background:#122851;color:#fff;padding:18px 24px;font-size:18px;font-weight:600">
+          New Admission Enquiry — Kabira The International School
+        </td></tr>
+        <tr style="background:#f5f7fa"><td style="padding:12px 16px;color:#555;width:40%"><strong>Reference</strong></td><td style="padding:12px 16px">${data.id.slice(0, 8).toUpperCase()}</td></tr>
+        <tr><td style="padding:12px 16px;color:#555"><strong>Parent / Guardian</strong></td><td style="padding:12px 16px">${data.parentName}</td></tr>
+        <tr style="background:#f5f7fa"><td style="padding:12px 16px;color:#555"><strong>Child's Name</strong></td><td style="padding:12px 16px">${data.childFirstName}</td></tr>
+        <tr><td style="padding:12px 16px;color:#555"><strong>Age</strong></td><td style="padding:12px 16px">${data.childAge} years</td></tr>
+        <tr style="background:#f5f7fa"><td style="padding:12px 16px;color:#555"><strong>Programme</strong></td><td style="padding:12px 16px">${data.programme}</td></tr>
+        <tr><td style="padding:12px 16px;color:#555"><strong>Mobile</strong></td><td style="padding:12px 16px">+91 ${data.contactNumber}</td></tr>
+        <tr style="background:#f5f7fa"><td style="padding:12px 16px;color:#555"><strong>Message</strong></td><td style="padding:12px 16px">${data.message || '—'}</td></tr>
+      </table>
+      <p style="font-family:sans-serif;font-size:13px;color:#888;margin-top:16px">Sent by Kabira admissions system · kabirainternational.com</p>
+    `;
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendApiKey}` },
       body: JSON.stringify({
-        _subject: `New admission enquiry — ${data.childFirstName} (${data.programme})`,
-        _template: 'table',
-        _captcha: 'false',
-        Reference: data.id,
-        'Parent / Guardian': data.parentName,
-        Child: data.childFirstName,
-        Age: data.childAge,
-        Programme: data.programme,
-        Mobile: `+91 ${data.contactNumber}`,
-        Message: data.message || '—',
+        from: 'Kabira Admissions <admissions@kabirainternational.com>',
+        to: [NOTIFY_EMAIL],
+        subject: `New admission enquiry — ${data.childFirstName} (${data.programme})`,
+        html,
       }),
     });
     if (!response.ok) console.error('Admission notification email failed', response.status, await response.text().catch(() => ''));
+    else console.log('Admission notification email sent for', data.id.slice(0, 8));
   } catch (error) {
     console.error('Admission notification email failed', error);
   }
@@ -165,13 +189,18 @@ export default {
         for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
         input = JSON.parse(new TextDecoder().decode(bytes));
       } catch { return json({ error: 'Please check your form and try again.' }, 400, cors); }
+      // Verify Turnstile token before anything else
+      const turnstileToken = typeof input?.turnstileToken === 'string' ? input.turnstileToken : '';
+      if (!turnstileToken) return json({ error: 'Please complete the security check and try again.' }, 400, cors);
+      const turnstileOk = await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, request.headers.get('cf-connecting-ip'));
+      if (!turnstileOk) return json({ error: 'Security check failed. Please refresh the page and try again.' }, 403, cors);
       const checked = validateAdmission(input);
       if (checked.error) return json({ error: checked.error }, 400, cors);
       try {
         if (!env.DB) throw new Error('Missing admissions database');
         const saved = await saveAdmission(env.DB, checked.value);
         if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429, cors);
-        const notify = notifyAdmission(checked.value);
+        const notify = notifyAdmission(checked.value, env.RESEND_API_KEY);
         if (ctx?.waitUntil) ctx.waitUntil(notify); else await notify;
         return json({ ok: true, reference: checked.value.id, message: 'Thank you. Your admission enquiry has been received by Kabira.' }, 201, cors);
       } catch {
