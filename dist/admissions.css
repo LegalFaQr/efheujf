@@ -122,3 +122,12 @@
 .visit-split .editorial-intro{max-width:none;margin-bottom:0}
 @media(max-width:760px){#experiences .philosophy-grid{grid-template-columns:1fr}.belief-vision{grid-template-columns:1fr;gap:40px}.visit-split{grid-template-columns:1fr;gap:26px}}
 @media(max-width:900px){.prepare-grid{grid-template-columns:1fr;gap:30px}}
+/* About Kabira desktop composition — scoped to this page only via body[data-page="about"], no other page is affected. */
+body[data-page="about"] .section{max-width:1260px}
+body[data-page="about"] .about-lead{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:8%;align-items:start}
+body[data-page="about"] .about-lead-copy p{margin:0;color:var(--muted);font-size:19px;line-height:1.65}
+body[data-page="about"] .about-lead-copy p+p{margin-top:20px}
+body[data-page="about"] .editorial-intro{margin-bottom:28px}
+body[data-page="about"] .editorial-intro p:not(.eyebrow){font-size:19px}
+body[data-page="about"] .leadership-copy>p:not(.eyebrow):not(.signature){font-size:19px;line-height:1.65}
+@media(max-width:768px){body[data-page="about"] .about-lead{grid-template-columns:1fr;gap:24px}}
