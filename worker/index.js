@@ -4,21 +4,28 @@ const json = (data, status = 200) => Response.json(data, { status, headers: { 'C
 const clean = value => typeof value === 'string' ? value.trim().replace(/[\u0000-\u001f]/g, '') : '';
 // Fixed server-side destination — never read from the request, so it cannot be changed via dev tools or a forged submission.
 const NOTIFY_EMAIL = 'kabiraschool.in@gmail.com';
+// Shared secret for the Excel export below. Hardcoded (not an environment secret) so no account/credential setup is required to deploy this. Change it any time by editing this file.
+export const EXPORT_KEY = 'fa144e4748cdacd127c64487b10bf981598e32c6246c60d2';
 // Lightweight branded 404 — kept inline rather than as a dist page to avoid extra build/routing complexity.
 const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Kabira The International School</title><meta name="robots" content="noindex"><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#102851;color:#fff;font:18px/1.6 'DM Sans',sans-serif;text-align:center;padding:24px}main{max-width:440px}h1{font:400 32px/1.2 'Playfair Display',Georgia,serif;margin:0 0 16px}p{color:#c9d6e8;margin:0 0 28px}a{display:inline-flex;padding:14px 24px;background:#94b862;color:#0b203f;text-decoration:none;font-weight:500}</style></head><body><main><h1>This page has wandered off.</h1><p>The page you're looking for doesn't exist. Let's get you back to Kabira The International School.</p><a href="/">Back to home ↗</a></main></body></html>`;
 
-// Sends a best-effort admission notification email; never throws, so it can never break the enquiry response.
-async function notifyAdmission(env, data) {
-  if (!env.RESEND_API_KEY) return;
+// Sends a best-effort admission notification email via FormSubmit.co — free, no account or API key needed. Never throws, so it can never break the enquiry response.
+async function notifyAdmission(data) {
   try {
-    const response = await fetch('https://api.resend.com/emails', {
+    const response = await fetch(`https://formsubmit.co/ajax/${NOTIFY_EMAIL}`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
-        from: env.RESEND_FROM || 'Kabira Admissions <onboarding@resend.dev>',
-        to: [NOTIFY_EMAIL],
-        subject: `New admission enquiry — ${data.childFirstName} (${data.programme})`,
-        text: `A new admission enquiry was submitted on the Kabira website.\n\nParent / guardian: ${data.parentName}\nChild: ${data.childFirstName} (age ${data.childAge})\nProgramme: ${data.programme}\nMobile: +91 ${data.contactNumber}\nMessage: ${data.message || '\u2014'}\nReference: ${data.id}`,
+        _subject: `New admission enquiry — ${data.childFirstName} (${data.programme})`,
+        _template: 'table',
+        _captcha: 'false',
+        Reference: data.id,
+        'Parent / Guardian': data.parentName,
+        Child: data.childFirstName,
+        Age: data.childAge,
+        Programme: data.programme,
+        Mobile: `+91 ${data.contactNumber}`,
+        Message: data.message || '—',
       }),
     });
     if (!response.ok) console.error('Admission notification email failed', response.status);
@@ -156,7 +163,7 @@ export default {
         if (!env.DB) throw new Error('Missing admissions database');
         const saved = await saveAdmission(env.DB, checked.value);
         if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429);
-        const notify = notifyAdmission(env, checked.value);
+        const notify = notifyAdmission(checked.value);
         if (ctx?.waitUntil) ctx.waitUntil(notify); else await notify;
         return json({ ok: true, reference: checked.value.id, message: 'Thank you. Your admission enquiry has been received by Kabira.' }, 201);
       } catch {
@@ -166,8 +173,8 @@ export default {
     }
     if (url.pathname === '/api/admissions/export' && request.method === 'GET') {
       const key = url.searchParams.get('key') || '';
-      // Constant response for "not configured" and "wrong key" so the endpoint can't be probed/enumerated.
-      if (!env.ADMIN_EXPORT_KEY || key !== env.ADMIN_EXPORT_KEY) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      // Constant response for "wrong key" so the endpoint can't be probed/enumerated.
+      if (key !== EXPORT_KEY) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       if (!env.DB) return json({ error: 'Admissions database unavailable.' }, 503);
       try {
         const { results } = await env.DB.prepare('SELECT id, parent_name, child_first_name, child_age, programme, contact_number, message, status, created_at FROM admissions ORDER BY created_at DESC').all();

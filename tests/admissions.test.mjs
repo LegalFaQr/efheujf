@@ -2,7 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync, readdirSync } from 'node:fs';
-import worker from '../worker/index.js';
+import worker, { EXPORT_KEY } from '../worker/index.js';
+
+// Never let tests hit the real FormSubmit endpoint (or the real inbox) — stub it and let anything else pass through.
+const realFetch = globalThis.fetch;
+const stubFetch = (input, init) => {
+  const requestUrl = typeof input === 'string' ? input : input.url;
+  if (requestUrl.startsWith('https://formsubmit.co/')) {
+    return Promise.resolve(new Response(JSON.stringify({ success: 'true' }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+  }
+  return realFetch(input, init);
+};
+globalThis.fetch = stubFetch;
 
 function database() {
   const sqlite = new DatabaseSync(':memory:');
@@ -65,25 +76,36 @@ test('country-code phone input is normalised before saving', async () => {
   assert.equal(DB.sqlite.prepare('SELECT contact_number FROM admissions').get().contact_number, '9000000000');
   DB.sqlite.close();
 });
-test('admissions export is hidden without the correct admin key', async () => {
+test('admissions export is hidden without the correct key', async () => {
   const DB = database();
   assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export'), { DB })).status, 404);
-  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=wrong'), { DB, ADMIN_EXPORT_KEY: 'secret' })).status, 404);
+  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=wrong'), { DB })).status, 404);
   DB.sqlite.close();
 });
-test('admissions export returns a valid xlsx workbook with the correct admin key', async () => {
+test('admissions export returns a valid xlsx workbook with the correct key', async () => {
   const DB = database();
   await worker.fetch(request(valid()), { DB });
-  const response = await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=secret'), { DB, ADMIN_EXPORT_KEY: 'secret' });
+  const response = await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=' + EXPORT_KEY), { DB });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('content-type'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   const bytes = new Uint8Array(await response.arrayBuffer());
   assert.equal(bytes[0], 0x50); assert.equal(bytes[1], 0x4b); // "PK" zip signature
   DB.sqlite.close();
 });
-test('admission notification is skipped without an email API key configured, and never breaks the response', async () => {
+test('admission notification is sent on a successful enquiry, and never breaks the response', async () => {
   const DB = database();
   const response = await worker.fetch(request(valid()), { DB });
   assert.equal(response.status, 201);
+  DB.sqlite.close();
+});
+test('a failed notification attempt still lets the admission succeed', async () => {
+  const DB = database();
+  globalThis.fetch = () => Promise.reject(new Error('network down'));
+  try {
+    const response = await worker.fetch(request(valid()), { DB });
+    assert.equal(response.status, 201);
+  } finally {
+    globalThis.fetch = stubFetch;
+  }
   DB.sqlite.close();
 });
