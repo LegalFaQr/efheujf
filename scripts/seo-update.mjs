@@ -1,15 +1,13 @@
 /**
- * SEO upgrade script for Kabira The International School
+ * Comprehensive SEO upgrade script for Kabira The International School
  * Run with: node scripts/seo-update.mjs
  *
- * What it does:
- * - Adds geo meta tags to every page
- * - Upgrades Schema.org to Preschool + ChildCare with geo, hours, areaServed
- * - Adds FAQPage schema to admissions.html (earns rich results)
- * - Adds BreadcrumbList schema to every inner page
- * - Optimises every title tag for local search
- * - Optimises every meta description with location keywords
- * - Adds lastmod dates to sitemap.xml
+ * Targets queries:
+ * - "school", "best school"
+ * - "pre school", "preschool", "best pre schools"
+ * - "kabira school", "kabira international school"
+ * - "best playway", "playway school", "play school"
+ * - Local intent (Zirakpur, Patiala Road, Chandigarh, Mohali, Panchkula)
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
@@ -20,17 +18,24 @@ const dist = path.join(root, 'dist');
 
 // ── Shared school schema block ────────────────────────────────────────────────
 const SCHOOL_SCHEMA = {
-  '@type': ['Preschool', 'ChildCare'],
+  '@type': ['School', 'Preschool', 'ChildCare'],
   '@id': 'https://www.kabirainternational.com/#school',
   name: 'Kabira The International School',
   alternateName: [
-    'Kabira International School Zirakpur',
+    'Kabira International School',
+    'Kabira School',
     'Kabira School Zirakpur',
     'Kabira Preschool Zirakpur',
+    'Kabira Pre School',
+    'Kabira Playway School',
+    'Kabira Play School Zirakpur',
     'Kabira The International School Patiala Road',
+    'Best Preschool in Zirakpur',
+    'Best Playway in Zirakpur',
+    'Best School in Zirakpur',
   ],
   description:
-    'Kabira The International School — a nurturing preschool, kindergarten and daycare in Zirakpur, Punjab, near Chandigarh and Mohali. Pre-Nursery (2+), Nursery (3+), LKG (4+), UKG (5+) and daycare from 8:30 AM to 6:30 PM.',
+    'Kabira The International School — ranked among the best pre schools, playway and daycare centres in Zirakpur, Punjab, near Chandigarh and Mohali. Pre-Nursery, Playway, Nursery, LKG, UKG and daycare from 8:30 AM to 6:30 PM.',
   url: 'https://www.kabirainternational.com/',
   logo: 'https://www.kabirainternational.com/assets/kabira-crest.png',
   image: 'https://www.kabirainternational.com/assets/kabira-campus.jpg',
@@ -58,7 +63,12 @@ const SCHOOL_SCHEMA = {
     { '@type': 'City', name: 'Zirakpur' },
     { '@type': 'City', name: 'Mohali' },
     { '@type': 'City', name: 'Chandigarh' },
+    { '@type': 'City', name: 'Panchkula' },
     { '@type': 'City', name: 'Dera Bassi' },
+    { '@type': 'AdministrativeArea', name: 'Patiala Road Zirakpur' },
+    { '@type': 'AdministrativeArea', name: 'VIP Road Zirakpur' },
+    { '@type': 'AdministrativeArea', name: 'Dhakoli' },
+    { '@type': 'AdministrativeArea', name: 'Baltana' },
     { '@type': 'State', name: 'Punjab' },
   ],
   parentOrganization: { '@type': 'Organization', name: 'Bhattacharya Educational Trust' },
@@ -80,21 +90,61 @@ const GEO_METAS = [
   '<meta name="ICBM" content="30.6461, 76.8197">',
 ].join('');
 
+const KEYWORDS_META = '<meta name="keywords" content="kabira school, kabira international school, best pre schools, best preschool in zirakpur, best playway in zirakpur, playway school, play school, best school in zirakpur, preschool patiala road, daycare zirakpur, preschool near chandigarh">';
+
 // ── Per-page config ───────────────────────────────────────────────────────────
 const PAGES = {
   'index.html': {
-    title: 'Kabira The International School | Preschool & Daycare, Zirakpur',
-    desc: 'Kabira The International School — Zirakpur\'s nurturing preschool and daycare, near Chandigarh. Pre-Nursery (2+), Nursery, LKG, UKG. Patiala Road, Punjab. Admissions open 2026–27.',
-    ogTitle: 'Kabira The International School | Preschool & Daycare, Zirakpur',
-    ogDesc: 'Nurturing preschool and daycare in Zirakpur, Punjab near Chandigarh. Pre-Nursery, Nursery, LKG, UKG. Patiala Road. Admissions open 2026–27.',
+    title: 'Kabira The International School | Best Preschool, Playway & Daycare in Zirakpur',
+    desc: 'Kabira The International School — Ranked among the best pre schools, playway and daycare centres in Zirakpur (Patiala Road near Chandigarh). Pre-Nursery (Playway), Nursery, LKG, UKG. Admissions open 2026–27.',
+    ogTitle: 'Kabira The International School | Best Preschool, Playway & Daycare in Zirakpur',
+    ogDesc: 'Leading preschool, playway and daycare in Zirakpur, Punjab near Chandigarh. Pre-Nursery (Playway), Nursery, LKG, UKG. Patiala Road. Admissions open 2026–27.',
     ogUrl: 'https://www.kabirainternational.com/',
-    extraSchema: [],
+    extraSchema: [
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Which is the best preschool and playway school in Zirakpur?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Kabira The International School is widely recognised as one of the best pre schools and playway centres in Zirakpur, Punjab. Located on Patiala Road near Chandigarh, Kabira offers nurturing early education for Pre-Nursery (Playway), Nursery, LKG, UKG and daycare under the leadership of Dr. Rita Rattan.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What age groups are admitted at Kabira School Zirakpur?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Kabira School admits children starting from 2 years old in Playway / Pre-Nursery, 3 years in Nursery, 4 years in LKG, and 5 years in UKG, alongside extended daycare from 8:30 AM to 6:30 PM.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What makes Kabira one of the best schools for early childhood in Zirakpur?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Kabira School combines small class sizes (around 20 children per class), activity and play-based learning, experienced leadership with nearly 28 years of educational expertise, safe campus infrastructure, and a focus on Indian values and holistic child development.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Is Kabira International School near Chandigarh and Mohali?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes. Kabira The International School is conveniently located on Patiala Road (#1105 Dashmesh Colony, behind Pearlwood Hotel) in Zirakpur, making it easily accessible for families from Zirakpur, Chandigarh, Mohali, and Panchkula.',
+            },
+          },
+        ],
+      },
+    ],
     breadcrumb: null,
   },
   'about.html': {
-    title: 'About Kabira | Preschool & Daycare in Zirakpur',
-    desc: 'About Kabira The International School — a preschool and daycare in Zirakpur, Punjab, near Chandigarh. Led by Dr. Rita Rattan with nearly 28 years of educational leadership.',
-    ogTitle: 'About Kabira | Preschool Near Chandigarh, Zirakpur Punjab',
+    title: 'About Kabira School | Best Preschool & Daycare in Zirakpur',
+    desc: 'About Kabira The International School — leading preschool, playway and daycare in Zirakpur, Punjab, near Chandigarh. Led by Dr. Rita Rattan with nearly 28 years of educational leadership.',
+    ogTitle: 'About Kabira School | Best Preschool & Daycare in Zirakpur',
     ogDesc: 'Our story, values and educational leadership behind Kabira International School, Patiala Road, Zirakpur, Punjab.',
     ogUrl: 'https://www.kabirainternational.com/about.html',
     extraSchema: [],
@@ -116,10 +166,10 @@ const PAGES = {
     ],
   },
   'programmes.html': {
-    title: 'Programmes: Pre-Nursery to UKG | Kabira, Zirakpur',
-    desc: 'Pre-Nursery (2+), Nursery (3+), LKG (4+) and UKG (5+) at Kabira International School — Patiala Road, Zirakpur, Punjab, near Chandigarh and Mohali. Admissions open.',
-    ogTitle: 'Programmes: Pre-Nursery to UKG | Kabira, Zirakpur',
-    ogDesc: 'Pre-Nursery, Nursery, LKG and UKG at Kabira International School, Zirakpur, Punjab — a steady, age-appropriate journey near Chandigarh.',
+    title: 'School Programmes: Playway to UKG | Kabira, Zirakpur',
+    desc: 'Explore Playway (Pre-Nursery 2+), Nursery (3+), LKG (4+) and UKG (5+) at Kabira International School — Patiala Road, Zirakpur, Punjab, near Chandigarh and Mohali. Admissions open.',
+    ogTitle: 'School Programmes: Playway to UKG | Kabira, Zirakpur',
+    ogDesc: 'Playway, Pre-Nursery, Nursery, LKG and UKG at Kabira International School, Zirakpur, Punjab — a steady, age-appropriate journey near Chandigarh.',
     ogUrl: 'https://www.kabirainternational.com/programmes.html',
     extraSchema: [],
     breadcrumb: [
@@ -128,10 +178,10 @@ const PAGES = {
     ],
   },
   'pre-nursery.html': {
-    title: 'Pre-Nursery in Zirakpur | Kabira The International School',
-    desc: 'Pre-Nursery at Kabira International School, Zirakpur — a gentle, play-based start for children 2+ years. Near Chandigarh on Patiala Road, Punjab. Admissions open 2026–27.',
-    ogTitle: 'Pre-Nursery in Zirakpur | Kabira The International School',
-    ogDesc: 'A gentle first step into school life for children 2+ years. Play-based Pre-Nursery near Chandigarh, Patiala Road, Zirakpur, Punjab.',
+    title: 'Pre-Nursery & Playway School in Zirakpur | Kabira The International School',
+    desc: 'Pre-Nursery and Playway at Kabira International School, Zirakpur — gentle, play-based learning for children 2+ years. One of the best playway schools near Chandigarh on Patiala Road, Punjab. Admissions open 2026–27.',
+    ogTitle: 'Pre-Nursery & Playway School in Zirakpur | Kabira The International School',
+    ogDesc: 'A gentle first step into school life for children 2+ years. Play-based Pre-Nursery and Playway school near Chandigarh, Patiala Road, Zirakpur, Punjab.',
     ogUrl: 'https://www.kabirainternational.com/pre-nursery.html',
     extraSchema: [],
     breadcrumb: [
@@ -155,7 +205,7 @@ const PAGES = {
   },
   'lkg.html': {
     title: 'LKG School in Zirakpur | Kabira The International School',
-    desc: 'LKG at Kabira International School, Zirakpur — for children 4+ years. Phonics, reading, numeracy and confidence. Near Chandigarh on Patiala Road, Punjab. Admissions open.',
+    desc: 'LKG kindergarten at Kabira International School, Zirakpur — for children 4+ years. Phonics, reading, numeracy and school readiness near Chandigarh on Patiala Road, Punjab. Admissions open.',
     ogTitle: 'LKG School in Zirakpur | Kabira The International School',
     ogDesc: 'For children 4+ years. Phonics, reading, number concepts and confident independence at Kabira International, Zirakpur near Chandigarh.',
     ogUrl: 'https://www.kabirainternational.com/lkg.html',
@@ -168,7 +218,7 @@ const PAGES = {
   },
   'ukg.html': {
     title: 'UKG School in Zirakpur | Kabira The International School',
-    desc: 'UKG at Kabira International School, Zirakpur — for children 5+ years. School-readiness, literacy and mathematics. Near Chandigarh on Patiala Road, Punjab. Admissions open.',
+    desc: 'UKG kindergarten at Kabira International School, Zirakpur — for children 5+ years. School-readiness, literacy and mathematics near Chandigarh on Patiala Road, Punjab. Admissions open.',
     ogTitle: 'UKG School in Zirakpur | Kabira The International School',
     ogDesc: 'For children 5+ years. Building reading readiness, mathematics and independence at Kabira International, Zirakpur near Chandigarh.',
     ogUrl: 'https://www.kabirainternational.com/ukg.html',
@@ -192,9 +242,9 @@ const PAGES = {
     ],
   },
   'daycare.html': {
-    title: 'Daycare in Zirakpur | Kabira The International School',
-    desc: 'Daycare at Kabira International School, Zirakpur — 8:30 AM to 6:30 PM. Safe, nurturing care for working families near Chandigarh, Patiala Road, Punjab.',
-    ogTitle: 'Daycare in Zirakpur | Kabira The International School',
+    title: 'Best Daycare in Zirakpur | Kabira The International School',
+    desc: 'Best daycare at Kabira International School, Zirakpur — 8:30 AM to 6:30 PM. Safe, nurturing care for working families near Chandigarh, Patiala Road, Punjab.',
+    ogTitle: 'Best Daycare in Zirakpur | Kabira The International School',
     ogDesc: 'A calm, secure and homely daycare for working families. 8:30 AM–6:30 PM at Kabira International School, Zirakpur near Chandigarh.',
     ogUrl: 'https://www.kabirainternational.com/daycare.html',
     extraSchema: [],
@@ -216,10 +266,10 @@ const PAGES = {
     ],
   },
   'admissions.html': {
-    title: 'Admissions | Kabira The International School, Zirakpur',
-    desc: 'Enrol your child at Kabira International School, Zirakpur. Pre-Nursery, Nursery, LKG, UKG & Daycare admissions open 2026–27. Near Chandigarh, Patiala Road, Punjab.',
-    ogTitle: 'Preschool Admissions Zirakpur 2026–27 | Kabira International School',
-    ogDesc: 'Admissions open for Pre-Nursery, Nursery, LKG, UKG and Daycare at Kabira International School, Zirakpur, Punjab. Send an enquiry or arrange a visit.',
+    title: 'School Admissions 2026–27 | Kabira International School, Zirakpur',
+    desc: 'Admissions open for Playway, Pre-Nursery, Nursery, LKG, UKG & Daycare at Kabira School, Zirakpur. Enrol your child in one of the best pre schools near Chandigarh, Patiala Road, Punjab.',
+    ogTitle: 'School Admissions Zirakpur 2026–27 | Kabira International School',
+    ogDesc: 'Admissions open for Playway, Pre-Nursery, Nursery, LKG, UKG and Daycare at Kabira International School, Zirakpur, Punjab. Send an enquiry or arrange a visit.',
     ogUrl: 'https://www.kabirainternational.com/admissions.html',
     extraSchema: [
       {
@@ -230,7 +280,7 @@ const PAGES = {
             name: 'Which programmes are available at Kabira International School Zirakpur?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Kabira The International School offers Pre-Nursery (2+ years), Nursery (3+), LKG (4+), UKG (5+) and Daycare from 8:30 AM to 6:30 PM. The school is located on Patiala Road, Zirakpur, Punjab.',
+              text: 'Kabira The International School offers Playway (Pre-Nursery 2+ years), Nursery (3+), LKG (4+), UKG (5+) and Daycare from 8:30 AM to 6:30 PM. The school is located on Patiala Road, Zirakpur, Punjab.',
             },
           },
           {
@@ -262,7 +312,7 @@ const PAGES = {
             name: 'What age groups does Kabira International School admit?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Kabira International School admits children from 2 years of age. Pre-Nursery is for 2+ years, Nursery for 3+ years, LKG for 4+ years, and UKG for 5+ years.',
+              text: 'Kabira International School admits children from 2 years of age in Playway / Pre-Nursery, 3+ years in Nursery, 4+ years in LKG, and 5+ years in UKG.',
             },
           },
         ],
@@ -293,9 +343,6 @@ function buildSchema(pageKey) {
   return `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })}</script>`;
 }
 
-// ── Geo meta tag string ───────────────────────────────────────────────────────
-const geoBlock = '<meta name="geo.region" content="IN-PB"><meta name="geo.placename" content="Zirakpur, Punjab, India"><meta name="geo.position" content="30.6461;76.8197"><meta name="ICBM" content="30.6461, 76.8197">';
-
 // ── Update each HTML file ─────────────────────────────────────────────────────
 let updated = 0;
 for (const [file, cfg] of Object.entries(PAGES)) {
@@ -311,21 +358,28 @@ for (const [file, cfg] of Object.entries(PAGES)) {
     `<meta name="description" content="${cfg.desc}">`,
   );
 
-  // 3. OG tags (replace the whole og block on line 7)
+  // 3. Keywords meta tag
+  if (html.includes('<meta name="keywords"')) {
+    html = html.replace(/<meta name="keywords"[^>]*>/, KEYWORDS_META);
+  } else {
+    html = html.replace('<meta property="og:type"', `${KEYWORDS_META}\n  <meta property="og:type"`);
+  }
+
+  // 4. OG tags
   html = html.replace(
     /<meta property="og:type"[^>]*>(<meta property="og:[^>]*>)*(<meta name="twitter:[^>]*>)*/,
     `<meta property="og:type" content="website"><meta property="og:title" content="${cfg.ogTitle}"><meta property="og:description" content="${cfg.ogDesc}"><meta property="og:image" content="https://www.kabirainternational.com/assets/kabira-campus.jpg"><meta property="og:url" content="${cfg.ogUrl}"><meta name="twitter:card" content="summary_large_image">`,
   );
 
-  // 4. Geo meta tags — add after viewport if not already present
+  // 5. Geo meta tags — add after viewport if not already present
   if (!html.includes('geo.region')) {
     html = html.replace(
       '<meta name="viewport" content="width=device-width, initial-scale=1">',
-      `<meta name="viewport" content="width=device-width, initial-scale=1">${geoBlock}`,
+      `<meta name="viewport" content="width=device-width, initial-scale=1">${GEO_METAS}`,
     );
   }
 
-  // 5. JSON-LD schema — replace existing block
+  // 6. JSON-LD schema — replace existing block
   html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, buildSchema(file));
 
   await writeFile(filePath, html, 'utf8');
@@ -337,10 +391,9 @@ for (const [file, cfg] of Object.entries(PAGES)) {
 const today = new Date().toISOString().slice(0, 10);
 const sitemapPath = path.join(dist, 'sitemap.xml');
 let sitemap = await readFile(sitemapPath, 'utf8');
-// Add lastmod to each URL entry
 sitemap = sitemap.replace(
-  /(<loc>[^<]+<\/loc>)(<changefreq>)/g,
-  `$1<lastmod>${today}</lastmod>$2`,
+  /<lastmod>[^<]+<\/lastmod>/g,
+  `<lastmod>${today}</lastmod>`,
 );
 await writeFile(sitemapPath, sitemap, 'utf8');
 console.log(`✓ sitemap.xml`);
