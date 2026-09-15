@@ -55,11 +55,14 @@ def main():
     p192 = master.resize((192, 192), Image.Resampling.LANCZOS)
     p192.save(os.path.join(dist_dir, 'favicon-192x192.png'), 'PNG', optimize=True)
 
-    # 4. Generate 180x180 Apple Touch Icon
+    # 4. Generate 512x512 PNG (PWA / Android standard)
+    master.save(os.path.join(dist_dir, 'favicon-512x512.png'), 'PNG', optimize=True)
+
+    # 5. Generate 180x180 Apple Touch Icon
     p180 = master.resize((180, 180), Image.Resampling.LANCZOS)
     p180.save(os.path.join(dist_dir, 'apple-touch-icon.png'), 'PNG', optimize=True)
 
-    # 5. Generate multi-resolution favicon.ico (16, 32, 48)
+    # 6. Generate multi-resolution favicon.ico (16, 32, 48)
     p16 = master.resize((16, 16), Image.Resampling.LANCZOS)
     p32 = master.resize((32, 32), Image.Resampling.LANCZOS)
     
@@ -69,7 +72,7 @@ def main():
     p48.save(ico_path, format='ICO', sizes=[(16, 16), (32, 32), (48, 48)])
 
     # Mirror root assets for static host / GitHub Pages fallback
-    for name in ['favicon.ico', 'favicon.svg', 'favicon-48x48.png', 'apple-touch-icon.png']:
+    for name in ['favicon.ico', 'favicon.svg', 'favicon-48x48.png', 'favicon-96x96.png', 'favicon-192x192.png', 'favicon-512x512.png', 'apple-touch-icon.png']:
         src = os.path.join(dist_dir, name)
         if os.path.exists(src):
             shutil.copy2(src, name)
