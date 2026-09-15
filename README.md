@@ -1,72 +1,38 @@
 # Kabira The International School
 
-Responsive, dependency-free multi-page website for Kabira The International School (Zirakpur). The site source lives in `dist/`; there is no frontend framework or bundler. Deploys independently to Cloudflare Workers + D1 (see below).
+Public website: https://www.kabirainternational.com/
 
-## Project structure
-- `dist/` — the 12 site pages plus `styles.css` / `admissions.css` / `app.js` / `admissions.js` and static `assets/`. This is hand-authored source, not a build artifact.
-- `worker/index.js` — the single-file Cloudflare Worker: serves `dist/` pages/assets, and powers the admissions API (`/api/admissions`) and the admin Excel export (`/api/admissions/export`).
-- `db/schema.ts`, `drizzle/`, `drizzle.config.ts` — the D1 admissions database schema and its SQL migration.
-- `scripts/build-worker.mjs` — bundles `dist/*` (base64-encoded) with `worker/index.js` into `dist/server/index.js` for deployment. No other build step exists.
-- `tests/admissions.test.mjs` — Node's built-in test runner against the Worker, using an in-memory SQLite database as a D1 stand-in.
-- `validate-site.py` — structural/content checks over `dist/` (unique IDs, one `<h1>` per page, working internal links, image alt/dimensions, protected CSS baseline, contact-info guards).
+## Source and build
 
-## Preview locally
-```
-python -m http.server 4173 --directory dist
-```
-Then open `http://127.0.0.1:4173`.
+- `dist/` contains hand-authored HTML, CSS, JavaScript and public assets: 11 canonical pages, one legacy redirect and a branded 404.
+- `worker/index.js` implements the admissions API, private Excel export and an alternate static delivery path.
+- `npm run build` minifies CSS/JS, versions their references, stages only public files in `.sites-runtime/public`, and embeds those same bytes in `dist/server/index.js`.
+- `.github/workflows/deploy-pages.yml` validates, tests, builds and publishes the staged public directory to GitHub Pages on a push to `main`.
+- `npm run deploy` independently deploys the Worker with Wrangler. Existing D1 schema and records are preserved; no migration is needed for this release.
 
-## Common commands
-```
-npm test              # run the Worker/admissions test suite
-npm run build          # bundle dist/ + worker/index.js into dist/server/index.js
-npm run db:generate     # regenerate a Drizzle migration after editing db/schema.ts
+## Verify and preview
+
+Use Node 24 and Python 3. Install with `npm ci`, then run:
+
+```sh
 python validate-site.py
+npm test
+npm run build
+node tests/release-ui.mjs
+node tests/visual-audit.mjs
+node scripts/preview.mjs
 ```
 
-## Admissions backend
-Submissions to the admissions form are saved to the D1 `admissions` table (rate-limited per phone number) and trigger a best-effort notification email via [FormSubmit.co](https://formsubmit.co) to a fixed, server-side address — no API key or paid service required. The notification destination is hardcoded in `worker/index.js` and is never read from the request, so it cannot be changed from the browser.
+Browser tests use installed Microsoft Edge by default. `QA_BROWSER` selects another installed Playwright browser channel. The preview serves the packaged Worker at http://127.0.0.1:4173. Form interaction tests intercept requests and never submit production enquiries. Visual checks cover 11 pages at 1920, 1600, 1440, 1366, 1280, 1024, 768, 430, 390 and 360 pixels, with axe checks at 1440 and 390.
 
-All saved admissions can be downloaded as a real `.xlsx` workbook from:
-```
-/api/admissions/export?key=<EXPORT_KEY>
-```
-`EXPORT_KEY` is a constant defined at the top of `worker/index.js`. Requests with a missing or incorrect key get an identical 404, so the endpoint can't be probed.
+## Admissions
 
-## Deploy to your own Cloudflare account
-This repo deploys via `wrangler.toml` to your own free Cloudflare Workers + D1 account.
+The browser submits to the existing school Cloudflare Worker. Enquiries are validated, saved with consent to D1 and limited per telephone number. An unchanged retry reuses its request ID. A new saved record triggers a best-effort Resend notification; notification failure does not discard the record. Parent input is escaped in notification HTML.
 
-1. `npm install -D wrangler` — installs the Cloudflare CLI as a dev dependency.
-2. `npx wrangler login` — opens a browser to connect your (free) Cloudflare account.
-3. `npx wrangler d1 create kabira-admissions` — creates the database and prints a `database_id`. Paste that ID into `wrangler.toml` in place of `REPLACE_WITH_THE_ID_PRINTED_BY_WRANGLER_D1_CREATE`.
-4. `npm run db:migrate:remote` — applies `drizzle/0000_glorious_karnak.sql` to the new remote database.
-5. `npm run deploy` — builds `dist/server/index.js` and runs `wrangler deploy`.
+`RESEND_API_KEY` and `ADMISSIONS_EXPORT_KEY` are Cloudflare secrets. Export requires the configured secret and returns 404 if missing or incorrect. No credential belongs in this repository. The previously hardcoded export key was rotated for this release. The owner access link is stored locally in ignored `.asset-sources/admissions-owner-access.txt`.
 
-Wrangler prints a live `*.workers.dev` URL when it finishes — that's your working site, admissions form included. A custom domain can be attached afterwards from the Cloudflare dashboard if you have one.
+## Images and evidence
 
-## Folders you can ignore
-`node_modules/`, `.asset-sources/`, `.sites-runtime/`, `dist/server/` and `.wrangler/` are all git-ignored — regenerated or platform-managed, not part of the tracked repository.
-- Phone numbers, email addresses, messaging links, internal finances and staffing plans are excluded. Higher classes are not advertised as currently available.
+Generated scenes are explicitly illustrative. Real campus and leadership photography remain authentic. The eight new scenes use the official crest as the reference for uniform embroidery; `docs/image-provenance.json` records the edit prompt and project paths. Full-size original and branded sources are local under ignored `.asset-sources/`. Responsive WebP variants are tracked under `dist/assets/`.
 
-## Files
-`dist/index.html` contains the school content.
-`dist/styles.css` contains the layout, responsive rules and motion.
-`dist/app.js` contains programme data and interactions.
-`validate-site.py` checks markup, anchors, image sources and contact exclusions.
-Original images are retained locally in `.asset-sources/`; published JPEG assets are in `dist/assets/`.
-
-## Image provenance
-Generated using the built-in image-generation tool with Logo.jpg and the supplied uniform reference. The four prompts requested Indian preschool block play (hero), seedling planting (nature), a reading corner (story) and a four-child summer/winter uniform collection. All used the navy/green/white palette with visible left-chest crest and KABIRA embroidery, natural lighting, realistic proportions and full compositions. Embroidery is an illustrative approximation, not a pixel-identical reproduction. These are not actual campus photographs and are labelled illustrative.
-
-## Verification
-JavaScript syntax, internal anchors, unique IDs, image metadata and responsive sources, programme-tab structure, contact-detail exclusions and absence of cropping rules checked for this revision. Hero and uniform asset compositions visually inspected. Browser-based visual and interaction re-testing could not run because the Codex browser checker failed during Windows sandbox startup; do not interpret the source checks as a full browser test.
-
-## Two-page organisation
-Home keeps the original welcome, leadership, admissions, FAQs and visit sections. experience.html contains the original programmes, learning experience, daycare, uniforms, story and future plans. Typography, spacing, imagery and component styles are preserved. Only the green palette is slightly darker. Old homepage section links redirect to their new location. Run python validate-site.py to validate both pages and cross-page anchors.
-
-
-## Admissions service
-The website has a native Kabira-branded admission enquiry form. Enquiries are saved privately in the site's D1 admissions table; no public read/list endpoint is exposed and no email notifications are configured. Authorized school owners can inspect records through Sites database tools. Only parent-provided enquiry details are collected with consent; raw identity documents are not requested.
-The supplied Director and Principal portrait is compressed as WebP without alteration. Leadership claim provenance is recorded in LEADERSHIP_SOURCE_NOTES.md. The embedded map and directions button use the school location supplied by the user.
-Build: node scripts/build-worker.mjs. Generate schema changes: node node_modules/drizzle-kit/bin.cjs generate. Tests: node --test tests/admissions.test.mjs. HTML and links: python validate-site.py. Authored static files remain in dist; the build embeds them in the dependency-free Worker for deployment.
-
+`docs/release-report.md` records release findings and external Google access limitations. Detailed screenshots, audit JSON and Lighthouse reports are local under ignored `.sites-runtime/`.

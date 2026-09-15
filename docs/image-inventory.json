@@ -1,0 +1,446 @@
+[
+  {
+    "file": "assets/abacus-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 66466,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/abacus-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 20594,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/abacus-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 39272,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/dance-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 56912,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/dance-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 17496,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/dance-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 33400,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/dr-rita-rattan-small.webp",
+    "width": 480,
+    "height": 640,
+    "bytes": 27370,
+    "pages": []
+  },
+  {
+    "file": "assets/dr-rita-rattan.webp",
+    "width": 960,
+    "height": 1280,
+    "bytes": 69246,
+    "pages": [
+      "about.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/hero-v2-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 79132,
+    "pages": [
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/hero-v2-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 24378,
+    "pages": [
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/hero-v2-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 47252,
+    "pages": [
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/inclusive-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 58812,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/inclusive-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 19324,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/inclusive-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 35972,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/kabira-campus-1200.webp",
+    "width": 1200,
+    "height": 670,
+    "bytes": 90568,
+    "pages": [
+      "admissions.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/kabira-campus-480.webp",
+    "width": 480,
+    "height": 268,
+    "bytes": 22164,
+    "pages": [
+      "admissions.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/kabira-campus-800.webp",
+    "width": 800,
+    "height": 447,
+    "bytes": 49478,
+    "pages": [
+      "admissions.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/kabira-crest-transparent.png",
+    "width": 176,
+    "height": 176,
+    "bytes": 54664,
+    "pages": []
+  },
+  {
+    "file": "assets/kabira-crest-transparent.webp",
+    "width": 176,
+    "height": 176,
+    "bytes": 40482,
+    "pages": [
+      "admissions.html"
+    ]
+  },
+  {
+    "file": "assets/kabira-crest.png",
+    "width": 176,
+    "height": 176,
+    "bytes": 45052,
+    "pages": []
+  },
+  {
+    "file": "assets/kabira-crest.webp",
+    "width": 176,
+    "height": 176,
+    "bytes": 31698,
+    "pages": [
+      "about.html",
+      "admissions.html",
+      "daycare.html",
+      "enrichment.html",
+      "inclusive-learning.html",
+      "index.html",
+      "lkg.html",
+      "nursery.html",
+      "pre-nursery.html",
+      "programmes.html",
+      "ukg.html"
+    ]
+  },
+  {
+    "file": "assets/lkg-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 59408,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "lkg.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/lkg-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 19894,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "lkg.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/lkg-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 36836,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "lkg.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/music-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 85094,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/music-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 28202,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/music-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 53720,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/nature-v2-1200.webp",
+    "width": 1200,
+    "height": 900,
+    "bytes": 111742,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/nature-v2-480.webp",
+    "width": 480,
+    "height": 360,
+    "bytes": 34070,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/nature-v2-800.webp",
+    "width": 800,
+    "height": 600,
+    "bytes": 68190,
+    "pages": [
+      "enrichment.html"
+    ]
+  },
+  {
+    "file": "assets/nursery-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 66986,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "nursery.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/nursery-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 22648,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "nursery.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/nursery-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 42486,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "nursery.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/pre-nursery-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 80536,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "pre-nursery.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/pre-nursery-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 25366,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "pre-nursery.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/pre-nursery-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 48574,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "pre-nursery.html",
+      "programmes.html"
+    ]
+  },
+  {
+    "file": "assets/story-v2-1200.webp",
+    "width": 1200,
+    "height": 900,
+    "bytes": 104350,
+    "pages": [
+      "daycare.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/story-v2-480.webp",
+    "width": 480,
+    "height": 360,
+    "bytes": 30372,
+    "pages": [
+      "daycare.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/story-v2-800.webp",
+    "width": 800,
+    "height": 600,
+    "bytes": 62118,
+    "pages": [
+      "daycare.html",
+      "index.html"
+    ]
+  },
+  {
+    "file": "assets/ukg-learning-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 66648,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "programmes.html",
+      "ukg.html"
+    ]
+  },
+  {
+    "file": "assets/ukg-learning-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 20684,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "programmes.html",
+      "ukg.html"
+    ]
+  },
+  {
+    "file": "assets/ukg-learning-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 40484,
+    "pages": [
+      "inclusive-learning.html",
+      "index.html",
+      "programmes.html",
+      "ukg.html"
+    ]
+  },
+  {
+    "file": "assets/uniform-v2-small.jpg",
+    "width": 768,
+    "height": 512,
+    "bytes": 70854,
+    "pages": []
+  },
+  {
+    "file": "assets/uniform-v2.jpg",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 206889,
+    "pages": [
+      "admissions.html"
+    ]
+  }
+]

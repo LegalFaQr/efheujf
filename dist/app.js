@@ -1,7 +1,7 @@
 const menu = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#navigation');
 const header = document.querySelector('.header');
-const mobile = window.matchMedia('(max-width: 760px)');
+const mobile = window.matchMedia('(max-width: 1000px)');
 function closeMenu(returnFocus = false) {
   nav.classList.remove('open');
   menu.setAttribute('aria-expanded', 'false');
@@ -21,29 +21,6 @@ mobile.addEventListener('change', () => closeMenu());
 const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 16);
 window.addEventListener('scroll', onScroll, {passive:true});
 onScroll();
-const navAdmissions = document.querySelector('#nav-admissions');
-const pageCtas = [...document.querySelectorAll('.page-cta')];
-if (navAdmissions && pageCtas.length && 'IntersectionObserver' in window) {
-  const setVisible = visible => {
-    navAdmissions.tabIndex = visible ? 0 : -1;
-    if (visible) {
-      navAdmissions.classList.remove('is-collapsed');
-      void navAdmissions.offsetWidth;
-      navAdmissions.classList.remove('is-hidden');
-    } else {
-      navAdmissions.classList.add('is-hidden');
-    }
-  };
-  navAdmissions.addEventListener('transitionend', e => {
-    if (e.propertyName === 'opacity' && navAdmissions.classList.contains('is-hidden')) navAdmissions.classList.add('is-collapsed');
-  });
-  const visibleCtas = new Set();
-  const ctaObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => { if (entry.isIntersecting) visibleCtas.add(entry.target); else visibleCtas.delete(entry.target); });
-    setVisible(visibleCtas.size === 0);
-  }, {threshold:0.2});
-  pageCtas.forEach(cta => ctaObserver.observe(cta));
-}
 const uniform = document.querySelector('#uniform-dialog');
 const uniformButton = document.querySelector('#view-uniform');
 if (uniform && uniformButton) {
@@ -60,5 +37,3 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
   document.body.classList.add('motion-ready');
   reducedMotion.addEventListener('change', e => { if(e.matches) { document.body.classList.remove('motion-ready'); observer.disconnect(); } });
 }
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });

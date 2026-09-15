@@ -1,0 +1,187 @@
+[
+  {
+    "page": "404.html",
+    "type": "utility",
+    "title": "Page not found | Kabira The International School",
+    "description": "This page could not be found. Return to Kabira’s preschool programmes or admissions.",
+    "robots": "noindex",
+    "h1": "Let’s findyour way back.",
+    "images": [
+      "/assets/kabira-crest.png"
+    ]
+  },
+  {
+    "page": "about.html",
+    "type": "indexable",
+    "title": "About Kabira | Preschool Leadership & Values, Zirakpur",
+    "description": "Meet Dr. Rita Ratan, Director-cum-Principal of Kabira The International School in Zirakpur. Explore our approach to early learning, kindness and confidence.",
+    "canonical": "https://www.kabirainternational.com/about.html",
+    "robots": "index,follow",
+    "h1": "A school built around how children grow.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/dr-rita-rattan.webp"
+    ]
+  },
+  {
+    "page": "admissions.html",
+    "type": "indexable",
+    "title": "Preschool Admissions in Zirakpur | Kabira",
+    "description": "Enquire for Pre-Nursery, Nursery, LKG, UKG or daycare at Kabira, Zirakpur. Find age guidance, visit information and the admission enquiry form.",
+    "canonical": "https://www.kabirainternational.com/admissions.html",
+    "robots": "index,follow",
+    "h1": "Let’s begin their Kabira story.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/kabira-crest-transparent.webp",
+      "assets/uniform-v2.jpg",
+      "assets/kabira-campus-800.webp",
+      "assets/uniform-v2.jpg"
+    ]
+  },
+  {
+    "page": "daycare.html",
+    "type": "indexable",
+    "title": "Daycare in Zirakpur | Kabira The International School",
+    "description": "Daycare at Kabira on Patiala Road, Zirakpur, from 8:30 AM to 6:30 PM. Explore a calm rhythm of supervised play, rest and reassurance for working families.",
+    "canonical": "https://www.kabirainternational.com/daycare.html",
+    "robots": "index,follow",
+    "h1": "More than a place to wait.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/story-v2-800.webp"
+    ]
+  },
+  {
+    "page": "enrichment.html",
+    "type": "indexable",
+    "title": "Preschool Activities in Zirakpur | Kabira Enrichment",
+    "description": "Dance, music, age-appropriate abacus and weekly special activities at Kabira, Zirakpur. Discover how enrichment supports expression and confidence.",
+    "canonical": "https://www.kabirainternational.com/enrichment.html",
+    "robots": "index,follow",
+    "h1": "Enrichment at Kabira.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/dance-learning-800.webp",
+      "assets/music-learning-800.webp",
+      "assets/abacus-learning-800.webp",
+      "assets/nature-v2-800.webp"
+    ]
+  },
+  {
+    "page": "experience.html",
+    "type": "legacy redirect",
+    "title": "Learning at Kabira | Our Educational Approach, Zirakpur",
+    "description": "Learning at Kabira has moved to Inclusive Learning.",
+    "canonical": "https://www.kabirainternational.com/inclusive-learning.html",
+    "robots": "noindex,follow",
+    "h1": "This page has moved",
+    "images": []
+  },
+  {
+    "page": "inclusive-learning.html",
+    "type": "indexable",
+    "title": "Inclusive Preschool Learning in Zirakpur | KabiraInclusive Preschool Learning in Zirakpur | Kabira",
+    "description": "How Kabira in Zirakpur supports different learning paces through individual attention, classroom support and open conversations with families.",
+    "canonical": "https://www.kabirainternational.com/inclusive-learning.html",
+    "robots": "index,follow",
+    "h1": "Every child should be known, understood, and given room to grow.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/inclusive-learning-800.webp",
+      "assets/pre-nursery-learning-800.webp",
+      "assets/nursery-learning-800.webp",
+      "assets/lkg-learning-800.webp",
+      "assets/ukg-learning-800.webp"
+    ]
+  },
+  {
+    "page": "index.html",
+    "type": "indexable",
+    "title": "Preschool & Daycare in Zirakpur | Kabira The International School",
+    "description": "Discover Kabira on Patiala Road, Zirakpur: Pre-Nursery, Nursery, LKG, UKG and daycare. Small classes, individual attention and a warm start. Arrange a visit.",
+    "canonical": "https://www.kabirainternational.com/",
+    "robots": "index,follow",
+    "h1": "A little wonder. A lifetime of possibilities.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/hero-v2-1200.webp",
+      "assets/dr-rita-rattan.webp",
+      "assets/inclusive-learning-800.webp",
+      "assets/pre-nursery-learning-800.webp",
+      "assets/nursery-learning-800.webp",
+      "assets/lkg-learning-800.webp",
+      "assets/ukg-learning-800.webp",
+      "assets/story-v2-800.webp",
+      "assets/kabira-campus-800.webp"
+    ]
+  },
+  {
+    "page": "lkg.html",
+    "type": "indexable",
+    "title": "LKG in Zirakpur | Early Literacy & Numeracy at Kabira",
+    "description": "Explore LKG for children 4+ at Kabira, Zirakpur. Play-based phonics, patterns and early numeracy develop communication, confidence and classroom readiness.",
+    "canonical": "https://www.kabirainternational.com/lkg.html",
+    "robots": "index,follow",
+    "h1": "Confidence in every new step.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/lkg-learning-800.webp"
+    ]
+  },
+  {
+    "page": "nursery.html",
+    "type": "indexable",
+    "title": "Nursery School in Zirakpur | Kabira",
+    "description": "Nursery for children 3+ at Kabira, Zirakpur: sorting, shapes, language and creative discovery. Learn about the programme and enquire for admission.",
+    "canonical": "https://www.kabirainternational.com/nursery.html",
+    "robots": "index,follow",
+    "h1": "Curiosity takes root.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/nursery-learning-800.webp"
+    ]
+  },
+  {
+    "page": "pre-nursery.html",
+    "type": "indexable",
+    "title": "Pre-Nursery in Zirakpur | Kabira The International School",
+    "description": "A gentle first school experience for children 2+ at Kabira, Zirakpur. Explore sensory play, stories, settling-in support and Pre-Nursery admissions.",
+    "canonical": "https://www.kabirainternational.com/pre-nursery.html",
+    "robots": "index,follow",
+    "h1": "Their first little world of learning.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/pre-nursery-learning-800.webp"
+    ]
+  },
+  {
+    "page": "programmes.html",
+    "type": "indexable",
+    "title": "Preschool Programmes in Zirakpur | Kabira",
+    "description": "Compare Pre-Nursery (2+), Nursery (3+), LKG (4+) and UKG (5+) at Kabira, Zirakpur. See the learning focus at each stage and find your child’s next step.",
+    "canonical": "https://www.kabirainternational.com/programmes.html",
+    "robots": "index,follow",
+    "h1": "Every age. A new discovery.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/pre-nursery-learning-800.webp",
+      "assets/nursery-learning-800.webp",
+      "assets/lkg-learning-800.webp",
+      "assets/ukg-learning-800.webp"
+    ]
+  },
+  {
+    "page": "ukg.html",
+    "type": "indexable",
+    "title": "UKG in Zirakpur | School Readiness at Kabira",
+    "description": "UKG for children 5+ at Kabira, Zirakpur builds reading readiness, writing, reasoning and independence. Explore a playful transition towards primary school.",
+    "canonical": "https://www.kabirainternational.com/ukg.html",
+    "robots": "index,follow",
+    "h1": "Ready for their next chapter.",
+    "images": [
+      "assets/kabira-crest.webp",
+      "assets/ukg-learning-800.webp"
+    ]
+  }
+]

@@ -7,13 +7,13 @@ const ALLOWED_ORIGINS = new Set(['https://kabirainternational.com', 'https://www
 const corsHeaders = origin => ({ 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', Vary: 'Origin' });
 // Fixed server-side destination — never read from the request, so it cannot be changed via dev tools or a forged submission.
 const NOTIFY_EMAIL = 'kabiraschool.in@gmail.com';
-// Shared secret for the Excel export below. Hardcoded (not an environment secret) so no account/credential setup is required to deploy this. Change it any time by editing this file.
-export const EXPORT_KEY = '8d0kvga1sxq375r2pwmzft9nui4lj6bechoy';
+// The owner-only export key is provisioned as a Cloudflare secret, never committed.
 // Lightweight branded 404 — kept inline rather than as a dist page to avoid extra build/routing complexity.
 const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Kabira The International School</title><meta name="robots" content="noindex"><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#102851;color:#fff;font:18px/1.6 'DM Sans',sans-serif;text-align:center;padding:24px}main{max-width:440px}h1{font:400 32px/1.2 'Playfair Display',Georgia,serif;margin:0 0 16px}p{color:#c9d6e8;margin:0 0 28px}a{display:inline-flex;padding:14px 24px;background:#94b862;color:#0b203f;text-decoration:none;font-weight:500}</style></head><body><main><h1>This page has wandered off.</h1><p>The page you're looking for doesn't exist. Let's get you back to Kabira The International School.</p><a href="/">Back to home ↗︎</a></main></body></html>`;
 
 // Sends a best-effort admission notification email via Resend. Never throws, so it can never break the enquiry response.
 async function notifyAdmission(data, resendApiKey) {
+  data = Object.fromEntries(Object.entries(data).map(([key, value]) => [key, xmlEscape(value)]));
   try {
     const html = `
       <table style="font-family:sans-serif;font-size:15px;border-collapse:collapse;width:100%;max-width:560px">
@@ -143,7 +143,7 @@ async function saveAdmission(db, data) {
     const existing = await db.prepare('SELECT id FROM admissions WHERE id = ? AND contact_number = ?').bind(data.id, data.contactNumber).first();
     if (!existing) return false;
   }
-  return true;
+  return { created: result.meta?.changes !== 0 };
 }
 
 export default {
@@ -180,8 +180,10 @@ export default {
         if (!env.DB) throw new Error('Missing admissions database');
         const saved = await saveAdmission(env.DB, checked.value);
         if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429, cors);
-        const notify = notifyAdmission(checked.value, env.RESEND_API_KEY);
-        if (ctx?.waitUntil) ctx.waitUntil(notify); else await notify;
+        if (saved.created) {
+          const notify = notifyAdmission(checked.value, env.RESEND_API_KEY);
+          if (ctx?.waitUntil) ctx.waitUntil(notify); else await notify;
+        }
         return json({ ok: true, reference: checked.value.id, message: 'Thank you. Your admission enquiry has been received by Kabira.' }, 201, cors);
       } catch {
         console.error('Admissions storage unavailable');
@@ -191,7 +193,7 @@ export default {
     if (url.pathname === '/api/admissions/export' && request.method === 'GET') {
       const key = url.searchParams.get('key') || '';
       // Constant response for "wrong key" so the endpoint can't be probed/enumerated.
-      if (key !== EXPORT_KEY) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      if (!env.ADMISSIONS_EXPORT_KEY || key !== env.ADMISSIONS_EXPORT_KEY) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       if (!env.DB) return json({ error: 'Admissions database unavailable.' }, 503);
       try {
         const { results } = await env.DB.prepare('SELECT id, parent_name, child_first_name, child_age, programme, contact_number, message, status, created_at FROM admissions ORDER BY created_at DESC').all();
@@ -208,11 +210,25 @@ export default {
       }
     }
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
+    // Normalise public URLs without redirecting the cross-origin admissions API.
+    if (['kabirainternational.com', 'www.kabirainternational.com'].includes(url.hostname) && (url.protocol !== 'https:' || url.hostname !== 'www.kabirainternational.com')) {
+      url.protocol = 'https:'; url.hostname = 'www.kabirainternational.com';
+      if (url.pathname === '/index.html') url.pathname = '/';
+      if (url.pathname === '/experience.html') url.pathname = '/inclusive-learning.html';
+      return Response.redirect(url.toString(), 301);
+    }
+    if (url.pathname === '/index.html' || url.pathname === '/experience.html') {
+      url.pathname = url.pathname === '/index.html' ? '/' : '/inclusive-learning.html';
+      return Response.redirect(url.toString(), 301);
+    }
     const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
     const assets = typeof PUBLIC_ASSETS === 'undefined' ? {} : PUBLIC_ASSETS;
     const asset = Object.hasOwn(assets, pathname) ? assets[pathname] : null;
-    if (!asset) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
-    const headers = { 'Content-Type': asset.type, 'ETag': asset.etag, 'Cache-Control': asset.type.startsWith('text/html') ? 'no-cache' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin' };
+    if (!asset || pathname === '/404.html') {
+      const body = assets['/404.html'] ? Uint8Array.from(atob(assets['/404.html'].body), c => c.charCodeAt(0)) : notFoundPage;
+      return new Response(request.method === 'HEAD' ? null : body, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Robots-Tag': 'noindex' } });
+    }
+    const headers = { 'Content-Type': asset.type, 'ETag': asset.etag, 'Cache-Control': asset.type.startsWith('text/html') ? 'no-cache' : url.searchParams.get('v') === asset.etag.replaceAll('"', '') ? 'public, max-age=31536000, immutable' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin' };
     if (request.headers.get('if-none-match') === asset.etag) return new Response(null, { status: 304, headers });
     return new Response(request.method === 'HEAD' ? null : Uint8Array.from(atob(asset.body), c => c.charCodeAt(0)), { headers });
   },

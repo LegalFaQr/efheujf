@@ -1,0 +1,86 @@
+{
+  "prompt": "Edit target: first image, an illustrative Kabira preschool learning scene. Reference: second image is the official Kabira school logo. Precise object edit only: add a small faithful embroidered school badge from the reference to the wearer's left chest of every child's white polo shirt wherever visible. Preserve the navy-and-green crowned shield/tree crest and readable KABIRA underneath, sized naturally as school uniform embroidery. Do not add a large overlay, watermark, background signage, or a new invented logo. Match perspective, cloth folds, light and occlusion. Preserve every face, age, pose, hands, learning materials, teacher clothing, classroom, camera framing and lighting. Keep 3:2 landscape composition. The photographs are fictional illustrative scenes, not documentary photos.",
+  "method": "Built-in imagegen, conversation-image edit input after local path sandbox failure",
+  "images": {
+    "pre-nursery": {
+      "original": ".asset-sources/release-2026-09-15/pre-nursery.png",
+      "branded": ".asset-sources/release-branded/pre-nursery.png",
+      "outputs": [
+        "dist/assets/pre-nursery-learning-480.webp",
+        "dist/assets/pre-nursery-learning-800.webp",
+        "dist/assets/pre-nursery-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "nursery": {
+      "original": ".asset-sources/release-2026-09-15/nursery.png",
+      "branded": ".asset-sources/release-branded/nursery.png",
+      "outputs": [
+        "dist/assets/nursery-learning-480.webp",
+        "dist/assets/nursery-learning-800.webp",
+        "dist/assets/nursery-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "lkg": {
+      "original": ".asset-sources/release-2026-09-15/lkg.png",
+      "branded": ".asset-sources/release-branded/lkg.png",
+      "outputs": [
+        "dist/assets/lkg-learning-480.webp",
+        "dist/assets/lkg-learning-800.webp",
+        "dist/assets/lkg-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "ukg": {
+      "original": ".asset-sources/release-2026-09-15/ukg.png",
+      "branded": ".asset-sources/release-branded/ukg.png",
+      "outputs": [
+        "dist/assets/ukg-learning-480.webp",
+        "dist/assets/ukg-learning-800.webp",
+        "dist/assets/ukg-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "inclusive": {
+      "original": ".asset-sources/release-2026-09-15/inclusive.png",
+      "branded": ".asset-sources/release-branded/inclusive.png",
+      "outputs": [
+        "dist/assets/inclusive-learning-480.webp",
+        "dist/assets/inclusive-learning-800.webp",
+        "dist/assets/inclusive-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "dance": {
+      "original": ".asset-sources/release-2026-09-15/dance.png",
+      "branded": ".asset-sources/release-branded/dance.png",
+      "outputs": [
+        "dist/assets/dance-learning-480.webp",
+        "dist/assets/dance-learning-800.webp",
+        "dist/assets/dance-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "music": {
+      "original": ".asset-sources/release-2026-09-15/music.png",
+      "branded": ".asset-sources/release-branded/music.png",
+      "outputs": [
+        "dist/assets/music-learning-480.webp",
+        "dist/assets/music-learning-800.webp",
+        "dist/assets/music-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "abacus": {
+      "original": ".asset-sources/release-2026-09-15/abacus.png",
+      "branded": ".asset-sources/release-branded/abacus.png",
+      "outputs": [
+        "dist/assets/abacus-learning-480.webp",
+        "dist/assets/abacus-learning-800.webp",
+        "dist/assets/abacus-learning-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    }
+  }
+}

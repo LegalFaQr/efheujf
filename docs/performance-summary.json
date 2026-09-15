@@ -1,0 +1,163 @@
+{
+  "method": "Local packaged Worker, Lighthouse mobile default and explicit desktop config, single runs. Lab results are variable and are not field CWV or INP.",
+  "mobileBeforeAfter": [
+    {
+      "page": "admissions.html",
+      "before": {
+        "performance": 97,
+        "lcp": 2487.07215,
+        "cls": 0.004212075911482519
+      },
+      "after": {
+        "performance": 93,
+        "lcp": 3020.4936,
+        "cls": 0.000189325183025094
+      }
+    },
+    {
+      "page": "daycare.html",
+      "before": {
+        "performance": 99,
+        "lcp": 1880.300475,
+        "cls": 0.0029388996215245072
+      },
+      "after": {
+        "performance": 97,
+        "lcp": 2507.1071000000006,
+        "cls": 0
+      }
+    },
+    {
+      "page": "index.html",
+      "before": {
+        "performance": 80,
+        "lcp": 3859.7963,
+        "cls": 0
+      },
+      "after": {
+        "performance": 93,
+        "lcp": 3035.0244000000002,
+        "cls": 0
+      }
+    },
+    {
+      "page": "pre-nursery.html",
+      "before": {
+        "performance": 98,
+        "lcp": 1881.7368250000002,
+        "cls": 0.012456808143328606
+      },
+      "after": {
+        "performance": 97,
+        "lcp": 2486.8862999999997,
+        "cls": 0
+      }
+    }
+  ],
+  "final": [
+    {
+      "page": "index.html",
+      "mode": "mobile",
+      "scores": {
+        "performance": 93,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 3035.0244000000002,
+      "cls": 0,
+      "tbt": 93
+    },
+    {
+      "page": "index.html",
+      "mode": "desktop",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 668.9345500000001,
+      "cls": 0,
+      "tbt": 0
+    },
+    {
+      "page": "pre-nursery.html",
+      "mode": "mobile",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2486.8862999999997,
+      "cls": 0,
+      "tbt": 16
+    },
+    {
+      "page": "pre-nursery.html",
+      "mode": "desktop",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 493.8912000000001,
+      "cls": 0,
+      "tbt": 0
+    },
+    {
+      "page": "daycare.html",
+      "mode": "mobile",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2507.1071000000006,
+      "cls": 0,
+      "tbt": 39
+    },
+    {
+      "page": "daycare.html",
+      "mode": "desktop",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 492.0113,
+      "cls": 0,
+      "tbt": 0
+    },
+    {
+      "page": "admissions.html",
+      "mode": "mobile",
+      "scores": {
+        "performance": 93,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 3020.4936,
+      "cls": 0.000189325183025094,
+      "tbt": 121
+    },
+    {
+      "page": "admissions.html",
+      "mode": "desktop",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 784.7455,
+      "cls": 0,
+      "tbt": 0
+    }
+  ]
+}
