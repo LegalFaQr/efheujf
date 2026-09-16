@@ -15,3 +15,5 @@ The website uses the CV supplied by the user on 13 September 2026 as reference m
 - The published phone number (+91 91151 04300) and WhatsApp link are the school's official contact channel, supplied explicitly by the user on 13 September 2026 for the Admissions page and footer — this is distinct from, and does not disclose, Dr. Rattan's personal numbers listed on her CV.
 
 - Final release brief supplied by the user in September 2026 corrects the published spelling and title to Dr. Rita Ratan, Director-cum-Principal. This latest instruction governs visible copy and structured data; existing portrait filenames remain unchanged.
+
+- The subsequent homepage letter supplied by the user is signed Dr. Rita Rattan. The homepage letter, portrait captions, About copy and Person metadata now use this latest supplied spelling. The letter is reproduced in full, with its opening visible and the remainder in a native expandable section.

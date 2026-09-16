@@ -65,6 +65,6 @@ for file in ['styles.css','admissions.css','fonts.css']:
 assert 'prefers-reduced-motion' in (dist/'styles.css').read_text()
 for p in ['pre-nursery','nursery','lkg','ukg']:
     assert f'assets/{p}-learning-' in texts[p+'.html'],f'Missing unique class image {p}'
-assert 'Dr. Rita Ratan' in texts['about.html'] and 'Director-cum-Principal' in texts['about.html']
+assert 'Dr. Rita Rattan' in texts['about.html'] and 'Director-cum-Principal' in texts['about.html']
 assert 'uniform-dialog' in pages['admissions.html'].ids
 print(json.dumps({'indexable_pages':len(public),'utility_pages':1,'legacy_redirect_pages':1,'metadata':'pass','schema_json':'pass','sitemap':'pass','links_and_assets':'pass','brand_and_contact_guards':'pass'}))

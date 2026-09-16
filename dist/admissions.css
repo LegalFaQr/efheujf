@@ -402,3 +402,36 @@ body[data-page=home] .admissions-intro>.button{align-self:center}
   .stage-track{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.stage-node{min-width:0}
 }
 @media(max-width:600px){.day-steps{grid-template-columns:minmax(0,1fr)}.day-steps p{font-size:16px}.day-steps li{gap:16px}}
+
+/* A personal letter from the Director-cum-Principal, scoped to the homepage. */
+.principal-message{background:#f7f7f1;border-block:1px solid var(--line);padding-block:76px}
+.principal-message-heading{max-width:880px;margin-bottom:44px}
+.principal-message-heading h2{font-size:clamp(34px,3.6vw,52px);line-height:1.14;letter-spacing:-.035em}
+.principal-message-layout{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:40px 7%;align-items:start}
+.principal-message-author{position:sticky;top:108px;min-width:0;max-width:360px}
+.principal-message-author .director-photo{margin:0;max-width:320px}
+.principal-message-author .director-photo img{max-height:420px;aspect-ratio:3/4;object-fit:cover}
+.principal-message-author .director-photo figcaption{padding-block:18px;border-bottom:0}
+.principal-message-author .director-photo figcaption strong{font-size:26px}
+.principal-message-experience{font-size:14px;line-height:1.7;color:var(--muted);padding-top:16px;border-top:1px solid var(--line);max-width:320px}
+.principal-message-author .text-link{font-size:13px;margin-top:18px}
+.principal-message-paper{min-width:0;background:#fff;border:1px solid #dce1d4;border-top:3px solid var(--green);padding:clamp(26px,3.5vw,48px);box-shadow:0 10px 28px #10285105}
+.principal-message-salutation{font-size:16px;font-weight:600;color:var(--green);margin-bottom:18px}
+.principal-message-opening{font:400 clamp(23px,2.1vw,29px)/1.55 var(--serif);color:var(--navy);letter-spacing:-.02em}
+.principal-message-details{margin-top:28px;border:0}
+.principal-message-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:58px;padding:15px 0;border-block:1px solid var(--line);font-size:15px;font-weight:600;color:var(--green);cursor:pointer}
+.principal-message-details summary::-webkit-details-marker{display:none}
+.principal-message-toggle{width:28px;height:28px;display:grid;place-items:center;border:1px solid #a3b291;border-radius:50%;font-size:22px;font-weight:400;line-height:1;flex-shrink:0;transition:transform .2s}
+.principal-close-label{display:none}.principal-message-details[open] .principal-read-label{display:none}.principal-message-details[open] .principal-close-label{display:inline}.principal-message-details[open] .principal-message-toggle{transform:rotate(45deg)}
+.principal-message-body{padding-top:26px;color:var(--ink);font-size:17px;line-height:1.85}
+.principal-message-body>p+p{margin-top:22px}
+.principal-message-body .principal-message-pullquote{font:italic 27px/1.5 var(--serif);color:var(--green);padding-block:8px}
+.principal-message-signoff{margin-top:30px;padding-top:26px;border-top:1px solid var(--line);font-size:14px;line-height:1.8;color:var(--muted)}
+.principal-message-signoff .principal-message-signature{font:italic 28px/1.5 var(--serif);color:var(--navy);margin-block:10px 4px}
+.principal-message-invitation{margin-top:24px;font-size:13px;line-height:1.7;color:var(--muted)}
+.principal-message-details[open]+.principal-message-invitation{display:none}
+@media(max-width:1000px){.principal-message-layout{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);column-gap:32px}.principal-message-author{position:static}.principal-message-author .text-link{font-size:12px}}
+@media(max-width:760px){.principal-message{padding-block:48px}.principal-message-heading{margin-bottom:30px}.principal-message-heading h2{font-size:clamp(31px,7.8vw,42px)}.principal-message-layout{grid-template-columns:minmax(0,1fr);gap:30px}.principal-message-author{max-width:none;width:100%}.principal-message-author .director-photo{max-width:280px;margin-inline:auto}.principal-message-experience,.principal-message-author>.text-link{display:none}.principal-message-paper{padding:26px 23px}.principal-message-opening{font-size:24px}.principal-message-body{font-size:16px;line-height:1.85}.principal-message-body .principal-message-pullquote{font-size:25px}.principal-message-heading br{display:none}}
+@media(prefers-reduced-motion:reduce){.principal-message-toggle{transition:none}}
+.principal-message-details summary .principal-read-label,.principal-message-details summary .principal-close-label{font:inherit;color:inherit;transform:none}
+@media(max-width:760px){.principal-message-author .director-photo{display:grid;grid-template-columns:108px minmax(0,1fr);gap:20px;align-items:center;max-width:none;margin:0}.principal-message-author .director-photo img{width:108px;height:144px}.principal-message-author .director-photo figcaption{padding:0;font-size:12px;line-height:1.7}.principal-message-author .director-photo figcaption strong{font-size:23px;line-height:1.2;margin-bottom:9px}}
