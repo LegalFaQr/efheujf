@@ -48,7 +48,7 @@ for name,page in pages.items():
     titles.append(re.search(r'<title>(.*?)</title>',texts[name],re.S).group(1));descriptions.append(page.meta['description'])
     assert not re.search(r'ranked among|best pre.?school|best playway|priceRange|aggregateRating|foundingDate',texts[name],re.I),f'Unverified claim {name}'
     assert 'experience.html' not in page.links,f'Legacy link {name}'
-    schemas=[json.loads(x) for x in re.findall(r'<script type="application/ld\+json">(.*?)</script>',texts[name],re.S)]
+    schemas=[json.loads(x) for x in re.findall(r'<script\s+type="application/ld\+json">(.*?)</script>',texts[name],re.S)]
     assert len(schemas)==1
     graph=schemas[0]['@graph'];assert any(x['@type']=='Preschool' for x in graph)
     assert any(x['@type']=='WebSite' for x in graph)
