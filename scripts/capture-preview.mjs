@@ -1,0 +1,11 @@
+import {chromium} from 'playwright';
+import {startPreview} from './preview.mjs';
+import {mkdir} from 'node:fs/promises';
+const server=await startPreview(4182); const browser=await chromium.launch({channel:'msedge',headless:true});
+const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+await page.goto('http://127.0.0.1:4182/'); await page.evaluate(()=>document.fonts.ready); await mkdir('.sites-runtime/preview',{recursive:true});
+await page.screenshot({path:'.sites-runtime/preview/mobile-home.png'});
+await page.locator('#programmes-preview').scrollIntoViewIfNeeded();await page.locator('#programmes-preview img').evaluateAll(async images => { await Promise.all(images.map(i => i.decode().catch(() => {}))); });await page.screenshot({path:'.sites-runtime/preview/mobile-programmes.png'});
+await page.goto('http://127.0.0.1:4182/about.html');await page.screenshot({path:'.sites-runtime/preview/mobile-about.png'});
+await page.goto('http://127.0.0.1:4182/');await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:'.sites-runtime/preview/desktop-home.png'});
+await browser.close();await new Promise(r=>server.close(r));

@@ -1,33 +1,21 @@
-# Page and search-intent map
+# Page and search-intent map — 30 September 2026
 
-Each canonical page has a unique title, description, social metadata and one primary content purpose. Queries describe intent; they are not ranking claims.
+Each page has a distinct parent task and local search intent. These are targets, not ranking claims.
 
 | Page | Search intent |
 |---|---|
-| index.html | undefined |
-| about.html | undefined |
-| inclusive-learning.html | undefined |
-| programmes.html | undefined |
-| pre-nursery.html | undefined |
-| nursery.html | undefined |
-| lkg.html | undefined |
-| ukg.html | undefined |
-| enrichment.html | undefined |
-| daycare.html | undefined |
-| admissions.html | undefined |
+| index.html | preschool in Zirakpur; play school in Zirakpur |
+| about.html | Kabira The International School; preschool philosophy Zirakpur |
+| inclusive-learning.html | inclusive preschool Zirakpur; additional classroom support |
+| programmes.html | preschool programmes Zirakpur; early years age guide |
+| pre-nursery.html | Pre-Nursery in Zirakpur; playway admission Zirakpur |
+| nursery.html | Nursery school in Zirakpur; Nursery admission |
+| lkg.html | LKG school Zirakpur; LKG admission |
+| ukg.html | UKG school Zirakpur; kindergarten readiness |
+| enrichment.html | preschool activities Zirakpur; dance music abacus |
+| daycare.html | daycare in Zirakpur; daycare for working parents |
+| admissions.html | preschool admission Zirakpur; school visit; daycare enquiry |
 
-## Research used
+Metadata and visible copy prioritise preschool, play school, playway and daycare in Zirakpur, with Patiala Road where relevant. No fabricated ratings, awards or best-school claims.
 
-Representative results included KidsVatika admissions, Kidzee Zirakpur and Paathshala admissions. The relevant parent tasks were age/stage selection, settling into preschool, working-family daycare timing and arranging an admissions visit. No competitor rankings, fees or claims were copied. Punjab geography supports Zirakpur in SAS Nagar district; the site does not portray itself as a Mohali-city campus.
-
-Sources consulted during this release:
-
-- https://kidsvatika.com/admissions-open-playway-school-zirakpur/
-- https://www.kidzee.com/best-preschool-in-zirakpur
-- https://paathshala.co.in/admissions/
-- https://puda.punjab.gov.in/sites/default/files/Zirakpur_rpt_2011.pdf
-- https://schema.org/Preschool
-- https://developers.google.com/search/docs/appearance/site-names
-- https://developers.google.com/search/docs/appearance/structured-data/local-business
-
-No ranking or indexing guarantee is made.
+References: [Google SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide), [Title links](https://developers.google.com/search/docs/appearance/title-link), [Recrawling](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl).

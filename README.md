@@ -3,10 +3,10 @@
 ## Source and build
 
 - `dist/` contains hand-authored HTML, CSS, JavaScript and public assets: 11 canonical pages, one legacy redirect and a branded 404.
-- `worker/index.js` implements the admissions API, private Excel export and an alternate static delivery path.
-- `npm run build` minifies CSS/JS, versions their references, stages only public files in `.sites-runtime/public`, and embeds those same bytes in `dist/server/index.js`.
+- `worker/index.js` implements the admissions API, private Excel export and redirects public web traffic to the official frontend.
+- `npm run build` minifies CSS/JS, versions their references, stages only public files in `.sites-runtime/public`, and embeds those same bytes in `dist/server/index.js` for the local preview.
 - `.github/workflows/deploy-pages.yml` validates, tests, builds and publishes the staged public directory to GitHub Pages on a push to `main`.
-- `npm run deploy` independently deploys the Worker with Wrangler. Existing D1 schema and records are preserved; no migration is needed for this release.
+- `npm run deploy` independently deploys the lightweight API from `worker/index.js` with Wrangler. Existing D1 schema and records are preserved; no migration is needed for this release. The configured admissions rate limiter adds a generous 30-request/minute ceiling per connecting IP in addition to the persistent three-enquiry/hour phone limit.
 
 ## Verify and preview
 
@@ -18,6 +18,8 @@ npm test
 npm run build
 node tests/release-ui.mjs
 node tests/visual-audit.mjs
+node tests/security-ux.mjs
+node scripts/audit-performance.mjs
 node scripts/preview.mjs
 ```
 
@@ -27,10 +29,12 @@ Browser tests use installed Microsoft Edge by default. `QA_BROWSER` selects anot
 
 The browser submits to the existing school Cloudflare Worker. Enquiries are validated, saved with consent to D1 and limited per telephone number. An unchanged retry reuses its request ID. A new saved record triggers a best-effort Resend notification; notification failure does not discard the record. Parent input is escaped in notification HTML.
 
-`RESEND_API_KEY` and `ADMISSIONS_EXPORT_KEY` are Cloudflare secrets. Export requires the configured secret and returns 404 if missing or incorrect. No credential belongs in this repository. The previously hardcoded export key was rotated for this release. The owner access link is stored locally in ignored `.asset-sources/admissions-owner-access.txt`.
+`RESEND_API_KEY` and `ADMISSIONS_EXPORT_KEY` are Cloudflare secrets. Export requires the configured secret and returns 404 if missing or incorrect. No credential belongs in this repository. The previously hardcoded export key was rotated for this release. Exports now require an `Authorization: Bearer` header. URL query credentials are rejected to keep the key out of browser history and access URLs. Set `ADMISSIONS_EXPORT_KEY` only in your local environment, then run `node scripts/download-admissions.mjs`; the private workbook is saved under ignored `.asset-sources/`. Do not share the old owner link.
 
 ## Images and evidence
 
 Generated scenes are explicitly illustrative. Real campus and leadership photography remain authentic. The eight new scenes use the official crest as the reference for uniform embroidery; `docs/image-provenance.json` records the edit prompt and project paths. Full-size original and branded sources are local under ignored `.asset-sources/`. Responsive WebP variants are tracked under `dist/assets/`.
 
 `docs/release-report.md` records release findings and external Google access limitations. Detailed screenshots, audit JSON and Lighthouse reports are local under ignored `.sites-runtime/`.
+
+The build prepares native expandable reading and per-page script-hash Content Security Policies before packaging assets. GitHub Pages receives the CSP meta tags; Worker delivery additionally sets response security headers. The two deployments remain independent. See `docs/full-audit-2026-09-30.md` for findings and publication status.

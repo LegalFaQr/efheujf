@@ -59,12 +59,12 @@ urls={e.text for e in ET.parse(dist/'sitemap.xml').iter('{http://www.sitemaps.or
 assert urls=={origin+'/'+('' if x=='index.html' else x) for x in public},'Sitemap mismatch'
 assert f'Sitemap: {origin}/sitemap.xml' in (dist/'robots.txt').read_text()
 assert 'Disallow: /\n' not in (dist/'robots.txt').read_text()
-for file in ['styles.css','admissions.css','fonts.css']:
+for file in ['styles.css','admissions.css','fonts.css','mobile-refresh.css']:
     css=(dist/file).read_text(encoding='utf-8');assert css.count('{')==css.count('}'),f'CSS braces {file}'
     assert not re.search(r'(?:body|html)\s*\{[^}]*overflow-x\s*:\s*(?:hidden|clip)',css),f'Page overflow masking {file}'
 assert 'prefers-reduced-motion' in (dist/'styles.css').read_text()
 for p in ['pre-nursery','nursery','lkg','ukg']:
     assert f'assets/{p}-learning-' in texts[p+'.html'],f'Missing unique class image {p}'
-assert 'Dr. Rita Rattan' in texts['about.html'] and 'Director-cum-Principal' in texts['about.html']
+assert 'Dr. Rita Rattan' in texts['about.html'] and 'Director and Principal' in texts['about.html']
 assert 'uniform-dialog' in pages['admissions.html'].ids
 print(json.dumps({'indexable_pages':len(public),'utility_pages':1,'legacy_redirect_pages':1,'metadata':'pass','schema_json':'pass','sitemap':'pass','links_and_assets':'pass','brand_and_contact_guards':'pass'}))

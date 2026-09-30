@@ -3,7 +3,7 @@ import {chromium} from 'playwright';
 import {startPreview} from '../scripts/preview.mjs';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 const server=await startPreview(4176);
-const browser=await chromium.launch({channel:process.env.QA_BROWSER||'msedge',headless:true});
+const browser=await chromium.launch({...(process.env.QA_BROWSER==='chromium'?{}:{channel:process.env.QA_BROWSER||'msedge'}),headless:true});
 const page=await browser.newPage({viewport:{width:390,height:844}});
 const requests=[];let succeed=false;
 await page.route('https://kabira-international-school.kabiraswebsite.workers.dev/api/admissions',async route=>{requests.push(route.request().postDataJSON());await new Promise(r=>setTimeout(r,250));await route.fulfill({status:succeed?201:503,contentType:'application/json',body:JSON.stringify(succeed?{ok:true,reference:requests.at(-1).requestId}:{error:'Please retry your enquiry.'})})});

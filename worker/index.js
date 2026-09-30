@@ -13,6 +13,7 @@ const notFoundPage = `<!doctype html><html lang="en-IN"><head><meta charset="UTF
 
 // Sends a best-effort admission notification email via Resend. Never throws, so it can never break the enquiry response.
 async function notifyAdmission(data, resendApiKey) {
+  if (!resendApiKey) { console.error('Admission notification is not configured'); return; }
   data = Object.fromEntries(Object.entries(data).map(([key, value]) => [key, xmlEscape(value)]));
   try {
     const html = `
@@ -31,6 +32,7 @@ async function notifyAdmission(data, resendApiKey) {
       <p style="font-family:sans-serif;font-size:13px;color:#888;margin-top:16px">Sent by Kabira admissions system · kabirainternational.com</p>
     `;
     const response = await fetch('https://api.resend.com/emails', {
+      signal: AbortSignal.timeout(10000),
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendApiKey}` },
       body: JSON.stringify({
@@ -40,10 +42,10 @@ async function notifyAdmission(data, resendApiKey) {
         html,
       }),
     });
-    if (!response.ok) console.error('Admission notification email failed', response.status, await response.text().catch(() => ''));
+    if (!response.ok) console.error('Admission notification email failed', response.status);
     else console.log('Admission notification email sent for', data.id.slice(0, 8));
   } catch (error) {
-    console.error('Admission notification email failed', error);
+    console.error('Admission notification email failed', error.name);
   }
 }
 
@@ -140,13 +142,15 @@ async function saveAdmission(db, data) {
     ON CONFLICT(id) DO NOTHING`).bind(data.id, data.parentName, data.childFirstName, data.childAge, data.programme, data.contactNumber, data.message, now.toISOString(), now.toISOString(), data.contactNumber, since).run();
   if (result.success === false) throw new Error('Admission insert failed');
   if (result.meta?.changes === 0) {
-    const existing = await db.prepare('SELECT id FROM admissions WHERE id = ? AND contact_number = ?').bind(data.id, data.contactNumber).first();
+    const existing = await db.prepare('SELECT * FROM admissions WHERE id = ?').bind(data.id).first();
     if (!existing) return false;
+    const fields = {parent_name:data.parentName, child_first_name:data.childFirstName, child_age:data.childAge, programme:data.programme, contact_number:data.contactNumber, message:data.message};
+    if (Object.entries(fields).some(([key,value]) => existing[key] !== value)) return { conflict:true };
   }
   return { created: result.meta?.changes !== 0 };
 }
 
-export default {
+const application = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/admissions') {
@@ -157,6 +161,15 @@ export default {
       if (!allowedOrigin) return json({ error: 'Please submit your enquiry from the Kabira website.' }, 403);
       const cors = corsHeaders(origin);
       if (!request.headers.get('content-type')?.startsWith('application/json')) return json({ error: 'Please use the admissions form on this website.' }, 415, cors);
+      // CORS protects browsers; it is not authentication. Limit abuse independently of submitted phone numbers.
+      if (env.ADMISSIONS_RATE_LIMITER) {
+        try {
+          const ip = request.headers.get('cf-connecting-ip');
+          if (!ip) return json({error:'Please try again shortly.'},503,cors);
+          const {success} = await env.ADMISSIONS_RATE_LIMITER.limit({key:`admissions:${ip}`});
+          if (!success) return json({error:'Too many requests. Please wait a minute and try again.'},429,{...cors,'Retry-After':'60'});
+        } catch { return json({error:'Please try again shortly.'},503,cors); }
+      }
       if (Number(request.headers.get('content-length') || 0) > 8192) return json({ error: 'This enquiry is too large.' }, 413, cors);
       let input;
       try {
@@ -179,7 +192,8 @@ export default {
       try {
         if (!env.DB) throw new Error('Missing admissions database');
         const saved = await saveAdmission(env.DB, checked.value);
-        if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429, cors);
+        if (!saved) return json({ error: 'We have received several enquiries for this number. Please try again in an hour.' }, 429, {...cors,'Retry-After':'3600'});
+        if (saved.conflict) return json({error:'This enquiry reference has already been used. Please reload and send a new enquiry.'},409,cors);
         if (saved.created) {
           const notify = notifyAdmission(checked.value, env.RESEND_API_KEY);
           if (ctx?.waitUntil) ctx.waitUntil(notify); else await notify;
@@ -191,7 +205,7 @@ export default {
       }
     }
     if (url.pathname === '/api/admissions/export' && request.method === 'GET') {
-      const key = url.searchParams.get('key') || '';
+      const key = request.headers.get('authorization')?.match(/^Bearer (.+)$/i)?.[1] || '';
       // Constant response for "wrong key" so the endpoint can't be probed/enumerated.
       if (!env.ADMISSIONS_EXPORT_KEY || key !== env.ADMISSIONS_EXPORT_KEY) return new Response(notFoundPage, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       if (!env.DB) return json({ error: 'Admissions database unavailable.' }, 503);
@@ -210,6 +224,14 @@ export default {
       }
     }
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
+    // Production serves only the API. The packaged local preview supplies PUBLIC_ASSETS.
+    // Send public web traffic to the single canonical GitHub Pages site.
+    if (typeof PUBLIC_ASSETS === 'undefined' && !url.pathname.startsWith('/api/')) {
+      const target = new URL('https://www.kabirainternational.com/');
+      target.pathname = url.pathname === '/index.html' ? '/' : url.pathname === '/experience.html' ? '/inclusive-learning.html' : url.pathname;
+      target.search = url.search;
+      return Response.redirect(target.toString(),301);
+    }
     // Normalise public URLs without redirecting the cross-origin admissions API.
     if (['kabirainternational.com', 'www.kabirainternational.com'].includes(url.hostname) && (url.protocol !== 'https:' || url.hostname !== 'www.kabirainternational.com')) {
       url.protocol = 'https:'; url.hostname = 'www.kabirainternational.com';
@@ -229,7 +251,27 @@ export default {
       return new Response(request.method === 'HEAD' ? null : body, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Robots-Tag': 'noindex' } });
     }
     const headers = { 'Content-Type': asset.type, 'ETag': asset.etag, 'Cache-Control': asset.type.startsWith('text/html') ? 'no-cache' : url.searchParams.get('v') === asset.etag.replaceAll('"', '') ? 'public, max-age=31536000, immutable' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin' };
+    if (asset.csp) headers['Content-Security-Policy'] = asset.csp + "; frame-ancestors 'none'";
     if (request.headers.get('if-none-match') === asset.etag) return new Response(null, { status: 304, headers });
     return new Response(request.method === 'HEAD' ? null : Uint8Array.from(atob(asset.body), c => c.charCodeAt(0)), { headers });
   },
+};
+
+// Apply security and privacy headers to errors, redirects and API responses as well as assets.
+export default {
+  async fetch(request, env, ctx) {
+    const response = await application.fetch(request, env, ctx);
+    const headers = new Headers(response.headers);
+    headers.set('X-Content-Type-Options','nosniff');
+    headers.set('Referrer-Policy','strict-origin-when-cross-origin');
+    headers.set('X-Frame-Options','DENY');
+    headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
+    if (new URL(request.url).protocol === 'https:') headers.set('Strict-Transport-Security','max-age=31536000');
+    if (new URL(request.url).pathname.startsWith('/api/')) {
+      headers.set('Cache-Control','no-store');
+      headers.set('Referrer-Policy','no-referrer');
+      headers.set('X-Robots-Tag','noindex, nofollow');
+    }
+    return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
+  }
 };

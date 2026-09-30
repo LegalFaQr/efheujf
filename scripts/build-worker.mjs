@@ -2,6 +2,8 @@ import { readFile, writeFile, mkdir, readdir, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { transform } from 'esbuild';
 import path from 'node:path';
+import {preparePages,contentSecurityPolicy} from './prepare-pages.mjs';
+await preparePages();
 const root = process.cwd();
 const dist = path.join(root, 'dist');
 const stage = path.resolve(root, '.sites-runtime/public');
@@ -24,7 +26,7 @@ for (const [file,original] of bytes) {
  let data=original;
  if(file.endsWith('.html')) data=Buffer.from(data.toString().replace(/(href|src)="((?:\.\/)?[^"?:/]+\.(?:css|js))(?:\?[^" ]*)?"/g,(all,attr,url)=>{const target=bytes.get(url.replace(/^\.\//,''));return target?`${attr}="${url}?v=${hash(target)}"`:all}));
  await writeFile(path.join(stage,file),data);
- assets[`/${file}`]={body:data.toString('base64'),type:types[path.extname(file)]||'application/octet-stream',etag:`"${hash(data)}"`};
+ assets[`/${file}`]={body:data.toString('base64'),type:types[path.extname(file)]||'application/octet-stream',etag:`"${hash(data)}"`,...(file.endsWith('.html')?{csp:contentSecurityPolicy(data.toString())}:{})};
 }
 await writeFile(path.join(stage,'.nojekyll'),'');
 await mkdir(path.join(dist,'server'),{recursive:true});

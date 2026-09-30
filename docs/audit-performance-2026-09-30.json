@@ -1,0 +1,159 @@
+{
+  "method": "Local mobile Lighthouse, single runs with targeted reruns after fixes; not field measurements or ranking evidence.",
+  "pages": [
+    {
+      "page": "about.html",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2535,
+      "cls": 0,
+      "tbt": 48,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "admissions.html",
+      "scores": {
+        "performance": 94,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 3029,
+      "cls": 0,
+      "tbt": 61,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "daycare.html",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2525,
+      "cls": 0,
+      "tbt": 43.44217499999991,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "enrichment.html",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2434,
+      "cls": 0,
+      "tbt": 15,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "inclusive-learning.html",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2574,
+      "cls": 0,
+      "tbt": 37,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "index.html",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2868,
+      "cls": 0,
+      "tbt": 0,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "lkg.html",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2878,
+      "cls": 0,
+      "tbt": 26,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "nursery.html",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2876,
+      "cls": 0,
+      "tbt": 0,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "pre-nursery.html",
+      "scores": {
+        "performance": 94,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 3026,
+      "cls": 0,
+      "tbt": 21,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "programmes.html",
+      "scores": {
+        "performance": 97,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2423,
+      "cls": 0,
+      "tbt": 17.5,
+      "consoleErrors": [],
+      "labelMismatch": []
+    },
+    {
+      "page": "ukg.html",
+      "scores": {
+        "performance": 95,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "lcp": 2879,
+      "cls": 0,
+      "tbt": 0,
+      "consoleErrors": [],
+      "labelMismatch": []
+    }
+  ]
+}

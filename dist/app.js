@@ -37,3 +37,10 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
   document.body.classList.add('motion-ready');
   reducedMotion.addEventListener('change', e => { if(e.matches) { document.body.classList.remove('motion-ready'); observer.disconnect(); } });
 }
+
+// Native reading sections start compact on mobile; desktop displays the full text.
+const desktopReading = window.matchMedia('(min-width: 761px)');
+function syncReading() {
+  document.querySelectorAll('.reading-details').forEach(details => { details.open = desktopReading.matches; });
+}
+syncReading(); desktopReading.addEventListener('change', syncReading);

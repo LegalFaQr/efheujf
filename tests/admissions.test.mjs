@@ -35,9 +35,9 @@ function request(data, headers = {}) {
 
 test('enquiry is saved with consent, and a retry does not create a duplicate', async () => {
   const DB = database(); const data = valid();
-  const first = await worker.fetch(request(data), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
+  const first = await worker.fetch(request(data), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
   assert.equal(first.status, 201); assert.equal((await first.json()).ok, true);
-  const retry = await worker.fetch(request(data), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
+  const retry = await worker.fetch(request(data), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
   assert.equal(retry.status, 201);
   const rows = DB.sqlite.prepare('SELECT * FROM admissions').all();
   assert.equal(rows.length, 1); assert.equal(rows[0].child_first_name, 'Test Child');
@@ -47,11 +47,11 @@ test('enquiry is saved with consent, and a retry does not create a duplicate', a
 test('validation rejects missing consent, invalid programmes, phone, age and oversized input', async () => {
   const DB = database();
   for (const changes of [{ consent: false }, { programme: 'Class 10' }, { childAge: '99' }, { contactNumber: '123' }, { parentName: '' }, { childFirstName: '' }, { requestId: 'bad-id' }, { website: 'spam' }, { message: 'a'.repeat(1001) }]) {
-    const response = await worker.fetch(request({ ...valid(), ...changes }), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
+    const response = await worker.fetch(request({ ...valid(), ...changes }), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
     assert.equal(response.status, 400);
   }
   assert.equal(DB.sqlite.prepare('SELECT count(*) as count FROM admissions').get().count, 0);
-  assert.equal((await worker.fetch(request({ ...valid(), message: 'a'.repeat(9000) }), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 413);
+  assert.equal((await worker.fetch(request({ ...valid(), message: 'a'.repeat(9000) }), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 413);
   DB.sqlite.close();
 });
 test('cross-site submissions and public record reads are blocked', async () => {
@@ -64,28 +64,28 @@ test('database failure does not claim that an enquiry was received', async () =>
 });
 test('mobile-number rate cap permits retries but limits fresh enquiries', async () => {
   const DB = database(); const first = valid();
-  assert.equal((await worker.fetch(request(first), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 201);
-  for (let i = 0; i < 2; i++) assert.equal((await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 201);
-  assert.equal((await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 429);
-  assert.equal((await worker.fetch(request(first), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 201);
+  assert.equal((await worker.fetch(request(first), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 201);
+  for (let i = 0; i < 2; i++) assert.equal((await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 201);
+  assert.equal((await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 429);
+  assert.equal((await worker.fetch(request(first), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 201);
   DB.sqlite.close();
 });
 test('country-code phone input is normalised before saving', async () => {
   const DB = database();
-  assert.equal((await worker.fetch(request({ ...valid(), contactNumber: '+91 9000000000' }), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 201);
+  assert.equal((await worker.fetch(request({ ...valid(), contactNumber: '+91 9000000000' }), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 201);
   assert.equal(DB.sqlite.prepare('SELECT contact_number FROM admissions').get().contact_number, '9000000000');
   DB.sqlite.close();
 });
 test('admissions export is hidden without the correct key', async () => {
   const DB = database();
-  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export'), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 404);
-  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=wrong'), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY })).status, 404);
+  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export'), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 404);
+  assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=wrong'), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" })).status, 404);
   DB.sqlite.close();
 });
 test('admissions export returns a valid xlsx workbook with the correct key', async () => {
   const DB = database();
-  await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
-  const response = await worker.fetch(new Request('https://kabira.test/api/admissions/export?key=' + EXPORT_KEY), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
+  await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
+  const response = await worker.fetch(new Request('https://kabira.test/api/admissions/export', {headers:{Authorization:'Bearer '+EXPORT_KEY}}), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('content-type'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   const bytes = new Uint8Array(await response.arrayBuffer());
@@ -94,7 +94,7 @@ test('admissions export returns a valid xlsx workbook with the correct key', asy
 });
 test('admission notification is sent on a successful enquiry, and never breaks the response', async () => {
   const DB = database();
-  const response = await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
+  const response = await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
   assert.equal(response.status, 201);
   DB.sqlite.close();
 });
@@ -102,7 +102,7 @@ test('a failed notification attempt still lets the admission succeed', async () 
   const DB = database();
   globalThis.fetch = () => Promise.reject(new Error('network down'));
   try {
-    const response = await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY });
+    const response = await worker.fetch(request(valid()), { DB, ADMISSIONS_EXPORT_KEY: EXPORT_KEY, RESEND_API_KEY: "test-only" });
     assert.equal(response.status, 201);
   } finally {
     globalThis.fetch = stubFetch;
@@ -113,11 +113,57 @@ test('a failed notification attempt still lets the admission succeed', async () 
 test('export is unavailable without a configured secret, even with an empty key', async () => {
   assert.equal((await worker.fetch(new Request('https://kabira.test/api/admissions/export'), {})).status, 404);
 });
+
+test('a replay with changed details or another phone cannot claim a saved enquiry', async () => {
+  const DB=database(); const data=valid();
+  try {
+    assert.equal((await worker.fetch(request(data),{DB})).status,201);
+    for (const change of [{message:'Changed text'},{contactNumber:'9111111111'},{childFirstName:'Different child'}]) {
+      assert.equal((await worker.fetch(request({...data,...change}),{DB})).status,409);
+    }
+    assert.equal(DB.sqlite.prepare('SELECT count(*) AS count FROM admissions').get().count,1);
+    assert.equal((await worker.fetch(request(data),{DB})).status,201);
+  } finally {DB.sqlite.close();}
+});
+
+test('export rejects URL credentials and uses private security headers', async () => {
+  const response=await worker.fetch(new Request('https://kabira.test/api/admissions/export?key='+EXPORT_KEY),{ADMISSIONS_EXPORT_KEY:EXPORT_KEY});
+  assert.equal(response.status,404);
+  assert.equal(response.headers.get('cache-control'),'no-store');
+  assert.equal(response.headers.get('referrer-policy'),'no-referrer');
+  assert.equal(response.headers.get('x-content-type-options'),'nosniff');
+  assert.equal(response.headers.get('x-frame-options'),'DENY');
+});
+
+test('request-level rate limiting runs before database writes and fails safely', async () => {
+  const DB=database(); const keys=[];
+  try {
+    const response=await worker.fetch(request(valid(),{'cf-connecting-ip':'192.0.2.10'}),{DB,ADMISSIONS_RATE_LIMITER:{limit:async ({key})=>{keys.push(key);return {success:false};}}});
+    assert.equal(response.status,429);assert.equal(response.headers.get('retry-after'),'60');
+    assert.deepEqual(keys,['admissions:192.0.2.10']);
+    assert.equal(DB.sqlite.prepare('SELECT count(*) AS count FROM admissions').get().count,0);
+    const unavailable=await worker.fetch(request(valid(),{'cf-connecting-ip':'192.0.2.10'}),{DB,ADMISSIONS_RATE_LIMITER:{limit:async()=>{throw Error('unavailable');}}});
+    assert.equal(unavailable.status,503);
+  } finally {DB.sqlite.close();}
+});
+
+test('streamed oversized input is rejected without trusting Content-Length', async () => {
+  const body=new ReadableStream({start(c){c.enqueue(new TextEncoder().encode('x'.repeat(8193)));c.close();}});
+  const response=await worker.fetch(new Request('https://kabira.test/api/admissions',{method:'POST',headers:{Origin:'https://kabira.test','Content-Type':'application/json'},body,duplex:'half'}),{});
+  assert.equal(response.status,413);
+});
+
+test('production API redirects web pages to the official site and keeps unknown APIs private', async () => {
+  const response=await worker.fetch(new Request('https://kabira.test/experience.html'),{});
+  assert.equal(response.status,301);
+  assert.equal(response.headers.get('location'),'https://www.kabirainternational.com/inclusive-learning.html');
+  assert.equal((await worker.fetch(new Request('https://kabira.test/api/not-an-endpoint'),{})).status,404);
+});
 test('notification HTML escapes parent input and retries send only once', async () => {
   const DB = database(); const calls=[];const data={...valid(),parentName:'<b>Parent</b>',message:'<img src=x onerror=alert(1)>'};
   globalThis.fetch=async (url,init)=>{assert.equal(url,'https://api.resend.com/emails');calls.push(JSON.parse(init.body));return Response.json({id:'test'})};
   try {
-    await worker.fetch(request(data), {DB}); await worker.fetch(request(data), {DB});
+    await worker.fetch(request(data), {DB,RESEND_API_KEY:"test-only"}); await worker.fetch(request(data), {DB,RESEND_API_KEY:"test-only"});
     assert.equal(calls.length,1);assert.ok(calls[0].html.includes('&lt;b&gt;Parent&lt;/b&gt;'));assert.ok(!calls[0].html.includes('<img src=x'));
   }finally{globalThis.fetch=stubFetch;DB.sqlite.close()}
 });
