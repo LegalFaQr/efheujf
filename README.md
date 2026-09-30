@@ -1,6 +1,4 @@
-# Kabira The International School
 
-Public website: https://www.kabirainternational.com/
 
 ## Source and build
 
