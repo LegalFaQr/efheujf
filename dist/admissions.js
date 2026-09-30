@@ -8,6 +8,7 @@ if (form) {
     programmeField.value = requestedProgramme;
   }
   const button = form.querySelector('button[type=submit]');
+  const buttonLabel = [...button.childNodes].map(node => node.cloneNode(true));
   const status = form.querySelector('.form-status');
   let pendingId;
   let previousPayload;
@@ -42,7 +43,7 @@ if (form) {
     } finally {
       clearTimeout(timeout);
       button.disabled = false;
-      button.textContent = 'Send admission enquiry ↗︎';
+      button.replaceChildren(...buttonLabel.map(node => node.cloneNode(true)));
       status.focus();
     }
   });

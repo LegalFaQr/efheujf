@@ -1,6 +1,25 @@
 import {readFile,writeFile,readdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {load} from 'cheerio';
+const arrowPaths={
+  '↗':'M7 17 17 7M7 7h10v10',
+  '→':'M5 12h14M12 5l7 7-7 7',
+  '↑':'M12 19V5M5 12l7-7 7 7',
+  '⟳':'M20 7v5h-5M20 12a8 8 0 1 0-2.3 5.7'
+};
+function replaceTextArrows($){
+  // SVG strokes avoid the coloured emoji glyphs used by some mobile fonts.
+  $('body *').contents().filter((_,node)=>node.type==='text'&&/[↗→↑⟳]/u.test(node.data)&&!$(node).parents('script,style,textarea').length).each((_,node)=>{
+    const replacement=[];
+    for(const part of node.data.split(/([↗→↑⟳][\uFE0E\uFE0F]?)/u)){
+      if(!part)continue;
+      const path=arrowPaths[part[0]];
+      const content=path?$(`<svg class="icon-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${path}"></path></svg>`):$('<span>').text(part).contents();
+      replacement.push(...content.toArray());
+    }
+    $(node).replaceWith(replacement);
+  });
+}
 export function contentSecurityPolicy(html) {
   const hashes=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].filter(m=>m[1].trim()).map(m=>`'sha256-${createHash('sha256').update(m[1]).digest('base64')}'`);
   return `default-src 'self'; script-src 'self' ${[...new Set(hashes)].join(' ')}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://kabira-international-school.kabiraswebsite.workers.dev; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'none'; form-action 'self'`;
@@ -8,6 +27,7 @@ export function contentSecurityPolicy(html) {
 export async function preparePages() {
   for(const file of (await readdir('dist')).filter(f=>f.endsWith('.html'))) {
     const original=await readFile('dist/'+file,'utf8');const $=load(original);
+    replaceTextArrows($);
     // Native details preserve the text and its order even without JavaScript.
     $('.about-lead-copy,.leadership-copy,.daycare-copy,.img-split-text').each((_,element)=>{
       const container=$(element);if(container.find('.reading-details').length)return;
