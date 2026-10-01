@@ -5,6 +5,7 @@
 - `dist/` contains hand-authored HTML, CSS, JavaScript and public assets: 11 canonical pages, one legacy redirect and a branded 404.
 - `worker/index.js` implements the admissions API, private Excel export and redirects public web traffic to the official frontend.
 - `npm run build` minifies CSS/JS, versions their references, stages only public files in `.sites-runtime/public`, and embeds those same bytes in `dist/server/index.js` for the local preview.
+- `npm run build:pages` additionally copies the same public bytes to `.sites-runtime/cloudflare-pages` and adds a small Pages routing adapter to preserve the existing `.html` addresses. `wrangler.toml` configures only this public frontend; `wrangler.api.toml` preserves the separate admissions Worker, database and rate limiter.
 - `.github/workflows/deploy-pages.yml` validates, tests, builds and publishes the staged public directory to GitHub Pages on a push to `main`.
 - `npm run deploy` independently deploys the lightweight API from `worker/index.js` with Wrangler. Existing D1 schema and records are preserved; no migration is needed for this release. The configured admissions rate limiter adds a generous 30-request/minute ceiling per connecting IP in addition to the persistent three-enquiry/hour phone limit.
 
@@ -19,6 +20,7 @@ npm run build
 node tests/release-ui.mjs
 node tests/visual-audit.mjs
 node tests/security-ux.mjs
+node tests/pages-hosting.mjs
 node scripts/audit-performance.mjs
 node scripts/preview.mjs
 ```
@@ -38,3 +40,9 @@ Generated scenes are explicitly illustrative. Real campus and leadership photogr
 `docs/release-report.md` records release findings and external Google access limitations. Detailed screenshots, audit JSON and Lighthouse reports are local under ignored `.sites-runtime/`.
 
 The build prepares native expandable reading and per-page script-hash Content Security Policies before packaging assets. GitHub Pages receives the CSP meta tags; Worker delivery additionally sets response security headers. The two deployments remain independent. See `docs/full-audit-2026-09-30.md` for findings and publication status.
+
+## Cloudflare hosting migration
+
+The Cloudflare Pages Git integration uses `main`, Node 24, build command `python3 validate-site.py && npm test && npm run build:pages`, and output `.sites-runtime/cloudflare-pages`. The existing GitHub Pages workflow is retained during migration as a fallback. The Pages runtime test verifies the unchanged HTML documents, original URLs, query strings, 404 handling and mobile controls. The public Pages frontend has no D1 or admissions-secret binding.
+
+Preview hosts on `pages.dev` are sent a noindex header. Admissions requests there are mocked for review; production submissions continue to require the official school domain. DNS and repository privacy are changed only after the new deployment is verified. Private rollback evidence and the original DNS records are stored under ignored `.sites-runtime/migration/`.

@@ -25,9 +25,9 @@ jobs:
       - run: npm ci
       - run: python3 validate-site.py
       - run: npm test
-      - run: npm run build
+      - run: npm run build:pages
       - run: npx playwright install --with-deps chromium
-      - run: node tests/release-ui.mjs && node tests/security-ux.mjs && node tests/visual-audit.mjs
+      - run: node tests/release-ui.mjs && node tests/security-ux.mjs && node tests/visual-audit.mjs && node tests/pages-hosting.mjs
         env:
           QA_BROWSER: chromium
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
