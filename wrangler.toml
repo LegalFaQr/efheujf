@@ -1,5 +1,4 @@
 # Public frontend only. Admissions continue on the existing independent Worker.
 name = "kabira-school-website"
-account_id = "9f9d51d09fbff0ce63382a46212fc8f1"
 pages_build_output_dir = ".sites-runtime/cloudflare-pages"
 compatibility_date = "2026-09-01"
