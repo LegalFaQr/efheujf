@@ -81,6 +81,19 @@
         "dist/assets/abacus-learning-1200.webp"
       ],
       "description": "Fictional illustrative learning scene; official crest reference added to visible uniform chests."
+    },
+    "hero": {
+      "original": "dist/assets/hero-v2-1200.webp at git commit 06113dea9790e683cef09eaf1ce093bed079dd8c",
+      "branded": ".asset-sources/hero-2026-10-08/hero-distinct-children.png",
+      "outputs": [
+        "dist/assets/hero-v2-480.webp",
+        "dist/assets/hero-v2-800.webp",
+        "dist/assets/hero-v2-1200.webp"
+      ],
+      "description": "Fictional illustrative learning scene. Right-hand boy edited to have a distinct face and hairstyle; existing classroom, uniforms and composition retained.",
+      "method": "Built-in imagegen edit",
+      "date": "2026-10-08",
+      "prompt": "Use case: precise-object-edit. Asset type: photorealistic illustrative homepage hero photograph for Kabira preschool, 3:2 landscape. Input image 1 is the edit target. Correct the duplicated-looking boys: replace ONLY the boy on the RIGHT with a clearly different fictional Indian preschool boy, approximately 4 years old, with a naturally rounded face, deeper warm brown skin, short tightly curly black hair, broader nose, distinct eyebrows and a gentle closed-mouth smile. His facial proportions and hairstyle must be visibly different from the boy on the left, so they do not look like twins or duplicated identities. Keep his seated position, looking down towards the blocks, age, body scale, white polo with navy collar and lime piping and embroidered Kabira badge, and anatomically natural hands holding the blue block. Preserve the boy on the LEFT, the girl in the middle, the teacher's identity/expression/clothing, their positions, the classroom windows and greenery, wooden table, colorful wooden blocks, lighting, camera framing, and existing school logo and readable KABIRA signage. Preserve the warm candid photographic look, realistic skin and fabric texture. No extra people, no repeated faces, no added text, no changes to other children's faces, no plastic skin. The image remains a fictional illustrative learning scene."
     }
   }
 }

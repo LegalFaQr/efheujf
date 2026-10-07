@@ -74,7 +74,7 @@
     "file": "assets/hero-v2-1200.webp",
     "width": 1200,
     "height": 800,
-    "bytes": 79132,
+    "bytes": 95462,
     "pages": [
       "index.html"
     ]
@@ -83,7 +83,7 @@
     "file": "assets/hero-v2-480.webp",
     "width": 480,
     "height": 320,
-    "bytes": 24378,
+    "bytes": 32016,
     "pages": [
       "index.html"
     ]
@@ -92,7 +92,7 @@
     "file": "assets/hero-v2-800.webp",
     "width": 800,
     "height": 533,
-    "bytes": 47252,
+    "bytes": 60646,
     "pages": [
       "index.html"
     ]
