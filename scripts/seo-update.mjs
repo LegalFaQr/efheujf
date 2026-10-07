@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {load} from 'cheerio';
 export const origin='https://www.kabirainternational.com';
 export const pages=[
-['index.html','Home','Preschool & Play School in Zirakpur | Kabira','Kabira preschool, play school and daycare on Patiala Road, Zirakpur. Limited-time admission-fee waiver, no annual charges. Arrange a visit.','hero-v2-1200.webp','preschool in Zirakpur; play school in Zirakpur'],
+['index.html','Home','Preschool & Play School in Zirakpur | Kabira','Kabira preschool, play school and daycare on Patiala Road, Zirakpur. Limited-time admission-fee waiver, no annual charges. Arrange a visit.','hero-learning-bea8768922-1200.webp','preschool in Zirakpur; play school in Zirakpur'],
 ['about.html','About Kabira','About Kabira Preschool in Zirakpur | Dr. Rita Rattan','Meet Dr. Rita Rattan, Director and Principal of Kabira preschool in Zirakpur, with 28 years of teaching and school experience. Discover our team and values.','dr-rita-rattan.webp','Kabira The International School; preschool philosophy Zirakpur'],
 ['inclusive-learning.html','Inclusive Learning','Individual Attention at Preschool in Zirakpur | Kabira','How Kabira in Zirakpur supports different learning paces through individual attention, classroom support and open conversations with families.','inclusive-learning-1200.webp','inclusive preschool Zirakpur; additional classroom support'],
 ['programmes.html','Programmes','Playway to UKG: Preschool Programmes in Zirakpur | Kabira','Compare Playway and Pre-Nursery (2+), Nursery (3+), LKG (4+) and UKG (5+) at Kabira, Zirakpur. Explore our NEP 2020 syllabus and find your child’s starting point.','pre-nursery-learning-1200.webp','preschool programmes Zirakpur; early years age guide'],

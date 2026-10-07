@@ -71,7 +71,7 @@
     ]
   },
   {
-    "file": "assets/hero-v2-1200.webp",
+    "file": "assets/hero-learning-bea8768922-1200.webp",
     "width": 1200,
     "height": 800,
     "bytes": 95462,
@@ -80,7 +80,7 @@
     ]
   },
   {
-    "file": "assets/hero-v2-480.webp",
+    "file": "assets/hero-learning-bea8768922-480.webp",
     "width": 480,
     "height": 320,
     "bytes": 32016,
@@ -89,13 +89,34 @@
     ]
   },
   {
-    "file": "assets/hero-v2-800.webp",
+    "file": "assets/hero-learning-bea8768922-800.webp",
     "width": 800,
     "height": 533,
     "bytes": 60646,
     "pages": [
       "index.html"
     ]
+  },
+  {
+    "file": "assets/hero-v2-1200.webp",
+    "width": 1200,
+    "height": 800,
+    "bytes": 95462,
+    "pages": []
+  },
+  {
+    "file": "assets/hero-v2-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 32016,
+    "pages": []
+  },
+  {
+    "file": "assets/hero-v2-800.webp",
+    "width": 800,
+    "height": 533,
+    "bytes": 60646,
+    "pages": []
   },
   {
     "file": "assets/inclusive-learning-1200.webp",

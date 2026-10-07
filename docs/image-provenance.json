@@ -86,9 +86,9 @@
       "original": "dist/assets/hero-v2-1200.webp at git commit 06113dea9790e683cef09eaf1ce093bed079dd8c",
       "branded": ".asset-sources/hero-2026-10-08/hero-distinct-children.png",
       "outputs": [
-        "dist/assets/hero-v2-480.webp",
-        "dist/assets/hero-v2-800.webp",
-        "dist/assets/hero-v2-1200.webp"
+        "dist/assets/hero-learning-bea8768922-480.webp",
+        "dist/assets/hero-learning-bea8768922-800.webp",
+        "dist/assets/hero-learning-bea8768922-1200.webp"
       ],
       "description": "Fictional illustrative learning scene. Right-hand boy edited to have a distinct face and hairstyle; existing classroom, uniforms and composition retained.",
       "method": "Built-in imagegen edit",
