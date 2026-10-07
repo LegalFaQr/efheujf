@@ -130,8 +130,8 @@
   {
     "file": "assets/kabira-campus-1200.webp",
     "width": 1200,
-    "height": 670,
-    "bytes": 90568,
+    "height": 850,
+    "bytes": 153126,
     "pages": [
       "admissions.html",
       "index.html"
@@ -140,8 +140,8 @@
   {
     "file": "assets/kabira-campus-480.webp",
     "width": 480,
-    "height": 268,
-    "bytes": 22164,
+    "height": 340,
+    "bytes": 35398,
     "pages": [
       "admissions.html",
       "index.html"
@@ -150,8 +150,8 @@
   {
     "file": "assets/kabira-campus-800.webp",
     "width": 800,
-    "height": 447,
-    "bytes": 49478,
+    "height": 567,
+    "bytes": 81486,
     "pages": [
       "admissions.html",
       "index.html"
